@@ -29,13 +29,20 @@ public class CategoryController {
 	private CategoryService categoryService;
 
 	@PostMapping("/saveCategory")
-	public String saveCategory(@ModelAttribute Category category, @RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
+	public String saveCategory(@ModelAttribute Category category, @RequestParam("isActive") String isActive, @RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
 
 		String imageName = file != null ? file.getOriginalFilename() : "default.jpg";
 		category.setImage(imageName);
+		if(isActive.equalsIgnoreCase("true")) {
+			category.setActive(true);
+		}else {
+			category.setActive(false);
+		}
+		
+		System.out.println("Category Value : " + category);
 
 		boolean isCategoryExist = categoryService.isCategoryExist(category);
-		System.out.println("isCategoryExist : " + isCategoryExist);
+
 		if (isCategoryExist) {
 			session.setAttribute("errorMsg", "Category name already exist");
 		} else {
@@ -43,12 +50,11 @@ public class CategoryController {
 			if (ObjectUtils.isEmpty(saveCategory)) {
 				session.setAttribute("errorMsg", "Not saved! Internal server error !");
 			} else {
-				/*Image Store*/
+				/* Image Store */
 				File saveFile = new ClassPathResource("static/img").getFile();
 				Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "category" + File.separator + imageName);
-				System.out.println(path);
 				Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-				/*Image Store*/
+				/* Image Store */
 				session.setAttribute("successMsg", "Saved successfully");
 			}
 		}

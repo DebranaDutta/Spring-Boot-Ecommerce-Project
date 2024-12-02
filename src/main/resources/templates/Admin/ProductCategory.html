@@ -30,10 +30,10 @@
 								<div class="mb-3">
 									<label>Status</label>
 									<div class="form-check">
-										<input class="form-check-input" type="radio" name="isActive" id="flexRadioDefault1" checked> <label class="form-check-label" for="flexRadioDefault1" value="true"> Active </label>
+										<input class="form-check-input" type="radio" checked value="true" name="isActive" id="flexRadioDefault1"> <label class="form-check-label" for="flexRadioDefault1"> Active </label>
 									</div>
 									<div class="form-check">
-										<input class="form-check-input" type="radio" name="isActive" id="flexRadioDefault2"> <label class="form-check-label" for="flexRadioDefault2" value="false"> Inactive </label>
+										<input class="form-check-input" type="radio" name="isActive" value="false" id="flexRadioDefault2"> <label class="form-check-label" for="flexRadioDefault2"> Inactive </label>
 									</div>
 								</div>
 								<div class="mb-3">
@@ -51,18 +51,23 @@
 							<table class="table">
 								<thead>
 									<tr>
-										<th scope="col">Sl No</th>
+										<th scope="col">Ref-Id</th>
 										<th scope="col">Name</th>
+										<th scope="col">Status</th>
 										<th scope="col">Image</th>
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th scope="row">1</th>
-										<td>Mark</td>
-										<td>Otto</td>
-										<td>@mdo</td>
+									<tr th:each="category,c:${categories}">
+										<th scope="row">[[${c.count}]]</th>
+										<td>[[${category.name}]]</td>
+										<td>[[${category.isActive}]]</td>
+										<td><img th:src="@{'/img/category/'+${category.image}}" width="50px" height="50px"></td>
+										<td>
+										<a href=""><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a>
+										<a href=""><i class="fa-solid fa-trash-can text-danger fa-2x"></i></a>
+										</td>
 									</tr>
 								</tbody>
 							</table>

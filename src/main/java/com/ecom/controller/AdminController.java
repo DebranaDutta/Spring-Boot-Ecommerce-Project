@@ -2,6 +2,7 @@ package com.ecom.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,7 +35,9 @@ public class AdminController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, path = "/loadAddCategory")
-	public String loadAddCategory() {
+	public String loadAddCategory(Model model) {
+		model.addAttribute("categories", categoryService.getAllCategory());
+		
 		return "Admin/ProductCategory.html";
 	}
 }
