@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{Admin/AdminBasePage::layout(~{::section})}">
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Details</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-5 p-3">
+			<div class="card card-sh">
+				<div class="card-header text-center">
+					<p class="fs-4">View Products</p>
+					<div class="card-sh">
+						<th:block th:if="${session.successMsg}">
+							<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+						</th:block>
+						<th:block th:if="${session.errorMsg}">
+							<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+						</th:block>
+					</div>
+				</div>
+				<div class="card-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Sl No</th>
+								<th scope="col">Title</th>
+								<th scope="col">Description</th>
+								<th scope="col">Category</th>
+								<th scope="col">Price</th>
+								<th scope="col">Stock</th>
+								<th scope="col">Image</th>
+								<th scope="col">Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="product,c:${products}">
+								<th scope="row">[[${c.count}]]</th>
+								<td>[[${product.productName}]]</td>
+								<td>[[${product.description}]]</td>
+								<td>[[${product.category}]]</td>
+								<td>[[${product.price}]]</td>
+								<td>[[${product.stcok}]]</td>
+								<td>
+									<img th:src="@{'/img/product/'+${product.image}}" width="50px" height="50px">
+								</td>
+								<td>
+									<a th:href="@{'/category/loadEditCategory/'+${product.productId}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> 
+									<a th:href="@{'/product/deleteProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-trash-can text-danger fa-2x"></i></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

@@ -10,29 +10,40 @@
 			<div class="row">
 				<div class="col-md-6 offset-md-3">
 					<div class="card card-sh">
-						<div class="card-header text-center fs-4">Add Product</div>
+						<div class="card-header text-center fs-4">Add Product
+							<th:block th:if="${session.successMsg}">
+								<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+						</div>
 						<div class="card-body">
-							<form action="">
+							<form action="/product/saveProduct" method="post" enctype="multipart/form-data">
 								<div class="mb-3">
-									<label>Enter Title : </label><input type="text" name="title" class="form-control">
+									<label>Enter Title : </label><input type="text" name="productName" class="form-control">
 								</div>
 								<div class="mb-3">
 									<label>Enter Description : </label>
 									<textarea row="3" cols="" name="description" class="form-control"></textarea>
 								</div>
 								<div class="mb-3">
-									<label>Category </label> <select class="form-control">
+									<label>Category </label> 
+									<select class="form-control" name="category">
 										<option>--select--</option>
+										<option th:each="category:${categories}">[[${category.name}]]</option>
 									</select>
 								</div>
 								<div class="mb-3">
 									<label>Enter Price : </label><input type="text" name="price" class="form-control">
 								</div>
 								<div class="mb-3">
-									<label>Enter Stock : </label><input type="text" name="stock" class="form-control">
+									<label>Enter Stock : </label><input type="text" name="stcok" class="form-control">
 								</div>
 								<div class="mb-3">
-									<label>Upload Image : </label><input type="file" name="ProductImage" class="form-control">
+									<label>Upload Image : </label><input type="file" name="productImage" class="form-control">
 								</div>
 								<button class="btn btn-primary col-md-12">Submit</button>
 							</form>

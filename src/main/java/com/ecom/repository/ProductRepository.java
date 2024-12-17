@@ -7,21 +7,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ecom.model.Category;
+import com.ecom.model.Product;
 
 import jakarta.transaction.Transactional;
 
-import java.util.List;
-
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
-	public boolean existsByName(String name);
-
-	public Category findByName(String name);
-
+public interface ProductRepository extends JpaRepository<Product, Integer> {
 	@Modifying
 	@Transactional
-	@Query("Delete from Category where id= :uuid")
-	public Integer deleteCategoryByUUID(@Param("uuid") String uuid);
-
-	public Category findById(String id);
+	@Query(value = "DELETE FROM Product WHERE productId = :productId ")
+	public Integer deleteProductById(@Param("productId") String productId);
 }
