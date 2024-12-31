@@ -10,11 +10,17 @@ import com.ecom.model.Category;
 import com.ecom.model.Product;
 
 import jakarta.transaction.Transactional;
+import java.util.List;
+
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+	public Product findByProductId(String productId);
+	
 	@Modifying
 	@Transactional
 	@Query(value = "DELETE FROM Product WHERE productId = :productId ")
 	public Integer deleteProductById(@Param("productId") String productId);
+	
 }

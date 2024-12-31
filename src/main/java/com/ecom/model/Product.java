@@ -1,5 +1,7 @@
 package com.ecom.model;
 
+import org.springframework.stereotype.Component;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,20 +19,22 @@ public class Product {
 	private String description;
 	private String category;
 	private double price;
-	private int stcok;
+	private double discount;
+	private int stock;
 	private String image;
 
 	public Product() {
 	}
 
-	public Product(String productId, String productName, String description, String category, double price, int stcok, String image) {
+	public Product(String productId, String productName, String description, String category, double price, double discount, int stock, String image) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.description = description;
 		this.category = category;
 		this.price = price;
-		this.stcok = stcok;
+		this.discount = discount;
+		this.stock = stock;
 		this.image = image;
 	}
 
@@ -74,12 +78,20 @@ public class Product {
 		this.price = price;
 	}
 
-	public int getStcok() {
-		return stcok;
+	public double getDiscount() {
+		return discount;
 	}
 
-	public void setStcok(int stcok) {
-		this.stcok = stcok;
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 
 	public String getImage() {

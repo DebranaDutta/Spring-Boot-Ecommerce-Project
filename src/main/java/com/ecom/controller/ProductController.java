@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ecom.model.Category;
 import com.ecom.model.Product;
+import com.ecom.service.CategoryService;
 import com.ecom.service.ProductService;
 import com.google.gson.Gson;
 
@@ -32,17 +34,23 @@ import jakarta.servlet.http.HttpSession;
 public class ProductController {
 	@Autowired
 	public ProductService productService;
+	@Autowired
+	public CategoryService categoryService;
 
 	Gson gson = new Gson();
 
 	@PostMapping("/saveProduct")
 	public String saveProduct(@ModelAttribute Product product, @RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
-
+		Product saveProduct = new Product();
 		String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
 		product.setImage(imageName);
-		Product saveProduct = productService.saveProdcut(product);
 
-		System.out.println(gson.toJson(saveProduct));
+		double discount = product.getDiscount();
+		if (discount >= 0 && discount <= 100) {
+			saveProduct = productService.saveProdcut(product);
+		} else {
+			session.setAttribute("DisErrorMsg", " Enter the discount between 0% - 100% ");
+		}
 
 		if (!ObjectUtils.isEmpty(saveProduct)) {
 			/* Image Store */
@@ -57,6 +65,33 @@ public class ProductController {
 		return "redirect:/admin/loadAddProduct";
 	}
 
+	@GetMapping("/editProduct/{productId}")
+	public String loadEditProductPage(@PathVariable("productId") String productId, Model model) {
+		Product product = productService.getProdcutById(productId);
+		model.addAttribute("product", product);
+
+		List<Category> categories = categoryService.getAllCategory();
+		model.addAttribute("categories", categories);
+
+		return "Admin/EditProduct.html";
+	}
+
+	@PostMapping("/updateProduct")
+	public String updateProduct(@ModelAttribute Product newProduct, @RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
+		if (newProduct.getDiscount() < 0 || newProduct.getDiscount() > 100) {
+			session.setAttribute("errorMsg", "Discount Amount shoud be between 0% to 100% !");
+		} else {
+			Product updatedProduct = productService.updateProduct(newProduct, file);
+			if (!ObjectUtils.isEmpty(updatedProduct)) {
+
+				session.setAttribute("successMsg", "Product updated successfully");
+			} else {
+				session.setAttribute("errorMsg", "Something went wrong!.....");
+			}
+		}
+		return "redirect:/product/editProduct/" + newProduct.getProductId();
+	}
+
 	@GetMapping("/viewProducts")
 	public String loadViewProducts(Model model, HttpSession session) {
 		List<Product> products = productService.getAllProducts();
@@ -66,11 +101,7 @@ public class ProductController {
 
 	@GetMapping("/deleteProduct/{productId}")
 	public String deleteProduct(@PathVariable("productId") String productId, HttpSession session) {
-
-		System.out.println(" Product Id : " + productId);
-
 		Integer count = productService.deleteProductById(productId);
-
 		if (count >= 1) {
 			session.setAttribute("successMsg", "Category deleted successfully");
 		} else {
