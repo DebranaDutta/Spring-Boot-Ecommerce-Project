@@ -22,11 +22,12 @@ public class Product {
 	private double discount;
 	private int stock;
 	private String image;
+	private boolean isActive;
 
 	public Product() {
 	}
 
-	public Product(String productId, String productName, String description, String category, double price, double discount, int stock, String image) {
+	public Product(String productId, String productName, String description, String category, double price, double discount, int stock, String image, boolean isActive) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
@@ -36,6 +37,15 @@ public class Product {
 		this.discount = discount;
 		this.stock = stock;
 		this.image = image;
+		this.isActive = isActive;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getProductId() {

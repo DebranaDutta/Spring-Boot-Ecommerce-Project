@@ -24,4 +24,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	public Integer deleteCategoryByUUID(@Param("uuid") String uuid);
 
 	public Category findById(String id);
+
+	public List<Category> findByIsActiveTrue();
 }

@@ -40,27 +40,16 @@ public class ProductController {
 	Gson gson = new Gson();
 
 	@PostMapping("/saveProduct")
-	public String saveProduct(@ModelAttribute Product product, @RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
-		Product saveProduct = new Product();
-		String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
-		product.setImage(imageName);
-
-		double discount = product.getDiscount();
-		if (discount >= 0 && discount <= 100) {
-			saveProduct = productService.saveProdcut(product);
-		} else {
-			session.setAttribute("DisErrorMsg", " Enter the discount between 0% - 100% ");
-		}
-
-		if (!ObjectUtils.isEmpty(saveProduct)) {
-			/* Image Store */
-			File saveFile = new ClassPathResource("static/img").getFile();
-			Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator + imageName);
-			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-			/* Image Store */
-			session.setAttribute("successMsg", "Product saved successfully");
-		} else {
-			session.setAttribute("errorMsg", "Something went wrong");
+	public String saveProduct(@ModelAttribute Product product, @RequestParam("isActive") String isActive, @RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
+		if(product.getDiscount()<0||product.getDiscount()>100) {
+			session.setAttribute("errorMsg", "Discount Amount shoud be between 0% to 100% !");
+		}else {
+			Product saveProduct = productService.saveProdcut(product, isActive, file);
+			if(!ObjectUtils.isEmpty(saveProduct)) {
+				session.setAttribute("successMsg", "Product saved successfully");
+			}else {
+				session.setAttribute("errorMsg", "Something went wrong");
+			}
 		}
 		return "redirect:/admin/loadAddProduct";
 	}
@@ -77,13 +66,12 @@ public class ProductController {
 	}
 
 	@PostMapping("/updateProduct")
-	public String updateProduct(@ModelAttribute Product newProduct, @RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
+	public String updateProduct(@ModelAttribute Product newProduct, @RequestParam("isActive") String isActive ,@RequestParam("productImage") MultipartFile file, HttpSession session) throws IOException {
 		if (newProduct.getDiscount() < 0 || newProduct.getDiscount() > 100) {
 			session.setAttribute("errorMsg", "Discount Amount shoud be between 0% to 100% !");
 		} else {
-			Product updatedProduct = productService.updateProduct(newProduct, file);
+			Product updatedProduct = productService.updateProduct(newProduct, isActive, file);
 			if (!ObjectUtils.isEmpty(updatedProduct)) {
-
 				session.setAttribute("successMsg", "Product updated successfully");
 			} else {
 				session.setAttribute("errorMsg", "Something went wrong!.....");
@@ -103,7 +91,7 @@ public class ProductController {
 	public String deleteProduct(@PathVariable("productId") String productId, HttpSession session) {
 		Integer count = productService.deleteProductById(productId);
 		if (count >= 1) {
-			session.setAttribute("successMsg", "Category deleted successfully");
+			session.setAttribute("successMsg", "Product deleted successfully");
 		} else {
 			session.setAttribute("errorMsg", "Something went wrong!.....");
 		}

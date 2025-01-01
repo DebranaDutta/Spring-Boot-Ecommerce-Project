@@ -62,11 +62,16 @@
 									<tr th:each="category,c:${categories}">
 										<th scope="row">[[${c.count}]]</th>
 										<td>[[${category.name}]]</td>
-										<td>[[${category.isActive}]]</td>
+										<td th:if="${category.isActive}== true" class="text-primary">ACTIVE</td>
+										<td th:if="${category.isActive}== false" class="text-danger">IN-ACTIVE</td>
 										<td><img th:src="@{'/img/category/'+${category.image}}" width="50px" height="50px"></td>
 										<td>
-											<a th:href="@{'/category/loadEditCategory/'+${category.name}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> 
-											<a th:href="@{'/category/deleteCategory/'+${category.name}}" class="btn"><i class="fa-solid fa-trash-can text-danger fa-2x"></i></a>
+											<a th:href="@{'/category/loadEditCategory/'+${category.name}}" class="btn">
+												<i class="fa-solid fa-pen-to-square text-primary fa-2x"></i>
+											</a> 
+											<a th:href="@{'/category/deleteCategory/'+${category.name}}" class="btn">
+												<i class="fa-solid fa-trash-can text-danger fa-2x"></i>
+											</a>
 										</td>
 									</tr>
 								</tbody>

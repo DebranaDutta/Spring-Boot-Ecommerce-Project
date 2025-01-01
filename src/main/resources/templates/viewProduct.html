@@ -6,23 +6,27 @@
 </head>
 <body>
 	<section>
-		<div class="container card-sh" style="margin-top: 70px">
+		<div class="container card-sh" style="margin-top:70px">
 			<div class="row">
 				<div class="col-md-12 p-5">
 					<div class="row">
 						<div class="col-md-6 text-end">
-							<img alt="" src="/img/product/laptop.jpg" width="330px" height="400px">
+							<img alt="" th:src="@{'/img/product/'+${product.image}}" width="330px" height="400px">
 						</div>
 						<div class="col-md-6">
-							<p class="fs-3">Laptop</p>
+							<p class="fs-3">[[${product.productName}]]</p>
 							<p>
-								<span class="fw-bold">Description</span> Hp Laptop, 256GB SSD
+								<span class="fw-bold">Description: </span> [[${product.description}]]
 							</p>
 							<p>
-								<span class="fw-bold"> Product Details: </span><br>Status : <span class="badge bg-success"> Available </span> <span class="badge bg-warning">Out of Stock</span><br> Category : <br>Policy : 7 Days Replacement & Return
+								<span class="fw-bold"> Product Details: </span>
+								<br>Status : 
+								<span class="badge bg-success"> Available</span></p>
+								<span class="badge bg-warning">Out of Stock</span>
+								<br>Policy : 7 Days Replacement & Return
 							</p>
 							<p class="fs-5 fw-bold">
-								Price : <span class="fs-6 text-primary"> 350000 </span> <span class="fs-6 text-decoration-line-through text-secondary m-1"> 700000 </span> <span class="fs-6 text-success m-2"> 50% off</span>
+								Price : <span class="fs-6 text-primary"> [[${product.price} - (${product.price}*${product.discount}/100)]] </span> <span class="fs-6 text-decoration-line-through text-secondary m-1"> [[${product.price}]] </span> <span class="fs-6 text-success m-2"> [[${product.discount}]]% off</span>
 							</p>
 							<div class="row">
 								<div class="col-md-2 text-danger text-center p-2">

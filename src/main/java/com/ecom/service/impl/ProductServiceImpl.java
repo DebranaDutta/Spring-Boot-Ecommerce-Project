@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,28 @@ public class ProductServiceImpl implements ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
-	@Override
-	public Product saveProdcut(Product product) {
-		return productRepository.save(product);
+
+	public Product saveProdcut(Product product, String isActive, MultipartFile file) throws IOException {
+		if (isActive.equalsIgnoreCase("true")) {
+			product.setActive(true);
+		} else {
+			product.setActive(false);
+		}
+
+		String imageName = file.isEmpty() ? "default.jpg" : file.getOriginalFilename();
+		product.setImage(imageName);
+
+		if (!file.isEmpty()) {
+			/* Image Store */
+			File saveFile = new ClassPathResource("static/img").getFile();
+			Path path = Paths.get(saveFile.getAbsolutePath() + File.separator + "product" + File.separator + imageName);
+			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+			/* Image Store */
+		}
+
+		Product saveProduct = productRepository.save(product);
+
+		return saveProduct;
 	}
 
 	@Override
@@ -47,11 +66,11 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product updateProduct(Product newProduct, MultipartFile file) throws IOException {
+	public Product updateProduct(Product newProduct, String isActive, MultipartFile file) throws IOException {
 		Product dbProduct = productRepository.findByProductId(newProduct.getProductId());
-		
+
 		String fileName = file.isEmpty() ? dbProduct.getImage() : file.getOriginalFilename();
-		
+
 		if (!ObjectUtils.isEmpty(dbProduct)) {
 			dbProduct.setProductName(newProduct.getProductName());
 			dbProduct.setDescription(newProduct.getDescription());
@@ -60,10 +79,15 @@ public class ProductServiceImpl implements ProductService {
 			dbProduct.setStock(newProduct.getStock());
 			dbProduct.setImage(fileName);
 			dbProduct.setDiscount(newProduct.getDiscount());
+			if (isActive.equalsIgnoreCase("true")) {
+				dbProduct.setActive(true);
+			} else {
+				dbProduct.setActive(false);
+			}
 		}
-		
+
 		Product updatedProduct = productRepository.save(dbProduct);
-		
+
 		if (!file.isEmpty()) {
 			/* Image Store */
 			File saveFile = new ClassPathResource("static/img").getFile();
@@ -71,8 +95,19 @@ public class ProductServiceImpl implements ProductService {
 			Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 			/* Image Store */
 		}
-		
+
 		return updatedProduct;
+	}
+
+	@Override
+	public List<Product> getAllActiveProducts(String category) {
+		List<Product> products = new ArrayList<>();
+		if (ObjectUtils.isEmpty(category)) {
+			products = productRepository.findByIsActiveTrue();
+		} else {
+			products = productRepository.findByCategory(category);
+		}
+		return products;
 	}
 
 }

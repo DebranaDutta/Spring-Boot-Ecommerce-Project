@@ -22,5 +22,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	@Transactional
 	@Query(value = "DELETE FROM Product WHERE productId = :productId ")
 	public Integer deleteProductById(@Param("productId") String productId);
+
+	public List<Product> findByIsActiveTrue();
+
+	public List<Product> findByCategory(String category);
 	
 }

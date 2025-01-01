@@ -16,4 +16,6 @@ public interface CategoryService {
 	public Category getCategoryByName(String name);
 
 	public Category getCategoryById(String uuid);
+	
+	public List<Category> getAllActiveCategory();
 }
