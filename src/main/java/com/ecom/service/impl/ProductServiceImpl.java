@@ -49,8 +49,25 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public List<Product> getAllProducts() {
-		return productRepository.findAll();
+	public List<Product> getAllProducts(String category) {
+		List<Product> products = new ArrayList<>();
+		if (ObjectUtils.isEmpty(category)) {
+			products = productRepository.findAll();
+		} else {
+			products = productRepository.findByCategory(category);
+		}
+		return products;
+	}
+
+	@Override
+	public List<Product> getAllActiveProducts(String category) {
+		List<Product> products = new ArrayList<>();
+		if (ObjectUtils.isEmpty(category)) {
+			products = productRepository.findByIsActiveTrue();
+		} else {
+			products = productRepository.findByCategoryAndIsActiveTrue(category);
+		}
+		return products;
 	}
 
 	@Override
@@ -97,17 +114,6 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		return updatedProduct;
-	}
-
-	@Override
-	public List<Product> getAllActiveProducts(String category) {
-		List<Product> products = new ArrayList<>();
-		if (ObjectUtils.isEmpty(category)) {
-			products = productRepository.findByIsActiveTrue();
-		} else {
-			products = productRepository.findByCategory(category);
-		}
-		return products;
 	}
 
 }

@@ -6,7 +6,7 @@
 </head>
 <body>
 	<section>
-		<div class="container card-sh" style="margin-top:70px">
+		<div class="container card-sh" style="margin-top: 70px">
 			<div class="row">
 				<div class="col-md-12 p-5">
 					<div class="row">
@@ -19,14 +19,13 @@
 								<span class="fw-bold">Description: </span> [[${product.description}]]
 							</p>
 							<p>
-								<span class="fw-bold"> Product Details: </span>
-								<br>Status : 
-								<span class="badge bg-success"> Available</span></p>
-								<span class="badge bg-warning">Out of Stock</span>
-								<br>Policy : 7 Days Replacement & Return
+								<span class="fw-bold"> Product Details: </span> <br>Status : <span class="badge bg-success" th:if="${product.stock} > 0"> Available</span> <span class="badge bg-warning" th:if="${product.stock} <= 0">Out of Stock</span>
+							</p>
+							<br>Policy : 7 Days Replacement & Return
 							</p>
 							<p class="fs-5 fw-bold">
-								Price : <span class="fs-6 text-primary"> [[${product.price} - (${product.price}*${product.discount}/100)]] </span> <span class="fs-6 text-decoration-line-through text-secondary m-1"> [[${product.price}]] </span> <span class="fs-6 text-success m-2"> [[${product.discount}]]% off</span>
+								Price : <span class="fs-6 text-primary"> [[${product.price} - (${product.price}*${product.discount}/100)]] </span> <span class="fs-6 text-decoration-line-through text-secondary m-1"> [[${product.price}]] </span> <span
+									class="fs-6 text-success m-2"> [[${product.discount}]]% off</span>
 							</p>
 							<div class="row">
 								<div class="col-md-2 text-danger text-center p-2">
@@ -42,7 +41,12 @@
 									<p>Free Shipping</p>
 								</div>
 							</div>
-							<a href="" class="btn btn-primary col-md-4 offset-md-1">Add to Cart</a>
+							<th:block th:if="${product.stock} > 0">
+								<a href="" class="btn btn-primary col-md-4 offset-md-1">Add to Cart</a>
+							</th:block>
+							<th:block th:if="${product.stock} <= 0">
+								<a href="" class="btn text-white btn-warning col-md-4 offset-md-1">Out of Stock</a>
+							</th:block>
 						</div>
 					</div>
 				</div>

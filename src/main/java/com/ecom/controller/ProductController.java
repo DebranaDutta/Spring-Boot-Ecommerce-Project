@@ -81,9 +81,16 @@ public class ProductController {
 	}
 
 	@GetMapping("/viewProducts")
-	public String loadViewProducts(Model model, HttpSession session) {
-		List<Product> products = productService.getAllProducts();
+	public String loadViewProducts(Model model, HttpSession session, @RequestParam(value = "category", defaultValue = "") String category) {
+		
+		List<Category> categories = categoryService.getAllCategory();
+		model.addAttribute("categories", categories);
+		
+		List<Product> products = productService.getAllProducts(category);
 		model.addAttribute("products", products);
+		
+		model.addAttribute("paramValue", category);
+		
 		return "Admin/ViewProducts.html";
 	}
 

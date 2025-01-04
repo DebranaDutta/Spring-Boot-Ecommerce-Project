@@ -7,61 +7,72 @@
 <body>
 	<section>
 		<div class="container-fluid mt-5 p-3">
-			<div class="card card-sh">
-				<div class="card-header text-center">
-					<p class="fs-4">View Products</p>
-					<div class="card-sh">
-						<th:block th:if="${session.successMsg}">
-							<p class="text-success fw-bold">[[${session.successMsg}]]</p>
-							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
-						</th:block>
-						<th:block th:if="${session.errorMsg}">
-							<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
-						</th:block>
+			<div class="row">
+				<div class="col-md-2">
+					<div class="card shadow-sm p-0 mb-5 bg-body-tertiary rounded">
+						<div class="card-body">
+							<div class="list-group">
+								<a href="/product/viewProducts" class="list-group-item list-group-item-action" aria-current="true">All Categories</a> 
+								<a th:each="category:${categories}" th:href="@{'/product/viewProducts?category='+${category.name}}"	th:classappend="${paramValue == category.name}?'active':'' " class="list-group-item list-group-item-action">[[${category.name}]]</a>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="card-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Sl No</th>
-								<th scope="col">Title</th>
-								<th scope="col">Description</th>
-								<th scope="col">Category</th>
-								<th scope="col">Price</th>
-								<th scope="col">Discount(%)</th>
-								<th scope="col">New Price</th>
-								<th scope="col">Stock</th>
-								<th scope="col">Status</th>
-								<th scope="col">Image</th>
-								<th scope="col">Action</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="product,c:${products}">
-								<th scope="row">[[${c.count}]]</th>
-								<td>[[${product.productName}]]</td>
-								<td>[[${product.description}]]</td>
-								<td>[[${product.category}]]</td>
-								<td>[[${product.price}]]</td>
-								<td>[[${product.discount}]]</td>
-								<td>[[${product.price} - (${product.price}*${product.discount}/100)]]</td>
-								<td>[[${product.stock}]]</td>
-								<td th:if="${product.isActive}== true" class="text-primary">ACTIVE</td>
-								<td th:if="${product.isActive}== false" class="text-danger">IN-ACTIVE</td>
-								<td>
-									<img th:src="@{'/img/product/'+${product.image}}" width="50px" height="50px">
-								</td>
-								<td>
-									<a th:href="@{'/product/editProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> 
-									<a th:href="@{'/product/deleteProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-trash-can text-danger fa-2x"></i></a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<div class="col-md-10">
+					<div class="card card-sh">
+						<div class="card-header text-center">
+							<p class="fs-4">View Products</p>
+							<div class="card-sh">
+								<th:block th:if="${session.successMsg}">
+									<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+								<th:block th:if="${session.errorMsg}">
+									<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+							</div>
+						</div>
+						<div class="card-body">
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">Sl No</th>
+										<th scope="col">Title</th>
+										<th scope="col">Description</th>
+										<th scope="col">Category</th>
+										<th scope="col">Price</th>
+										<th scope="col">Discount(%)</th>
+										<th scope="col">New Price</th>
+										<th scope="col">Stock</th>
+										<th scope="col">Status</th>
+										<th scope="col">Image</th>
+										<th scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="product,c:${products}">
+										<th scope="row">[[${c.count}]]</th>
+										<td>[[${product.productName}]]</td>
+										<td>[[${product.description}]]</td>
+										<td>[[${product.category}]]</td>
+										<td>[[${product.price}]]</td>
+										<td>[[${product.discount}]]</td>
+										<td>[[${product.price} - (${product.price}*${product.discount}/100)]]</td>
+										<td>[[${product.stock}]]</td>
+										<td th:if="${product.isActive} == true" class="text-primary">ACTIVE</td>
+										<td th:if="${product.isActive} == false" class="text-danger">IN-ACTIVE</td>
+										<td><img th:src="@{'/img/product/'+${product.image}}" width="50px" height="50px"></td>
+										<td><a th:href="@{'/product/editProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> <a th:href="@{'/product/deleteProduct/'+${product.productId}}" class="btn"><i
+												class="fa-solid fa-trash-can text-danger fa-2x"></i></a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
+
 		</div>
 	</section>
 </body>
