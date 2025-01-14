@@ -9,6 +9,8 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +24,17 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	@Override
 	public User saveUser(User user, MultipartFile file) throws IOException {
 		String imageName = file.isEmpty() ? "defaultUser.jpg" : file.getOriginalFilename();
 		user.setProfileImage(imageName);
+		user.setRole("ROLE_USER");
+
+		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPassword);
 
 		if (!file.isEmpty()) {
 			/* Image Store */
@@ -37,7 +46,15 @@ public class UserServiceImpl implements UserService {
 
 		User saveUser = userRepository.save(user);
 
+		System.out.println(" User : " + user);
+
 		return saveUser;
+	}
+
+	@Override
+	public User getUserByEmail(String userEmail) {
+		User user = userRepository.findByEmail(userEmail);
+		return user;
 	}
 
 }

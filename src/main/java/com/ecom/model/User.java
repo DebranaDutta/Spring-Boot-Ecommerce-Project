@@ -20,8 +20,13 @@ public class User {
 	private int pincode;
 	private String password;
 	private String profileImage;
+	private String role;
 
-	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String state, String city, int pincode, String password, String profileImage) {
+	public User() {
+		super();
+	}
+
+	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String city, String state, int pincode, String password, String profileImage, String role) {
 		super();
 		this.userId = userId;
 		this.firstName = firstName;
@@ -29,11 +34,12 @@ public class User {
 		this.mobileNo = mobileNo;
 		this.email = email;
 		this.address = address;
-		this.state = state;
 		this.city = city;
+		this.state = state;
 		this.pincode = pincode;
 		this.password = password;
 		this.profileImage = profileImage;
+		this.role = role;
 	}
 
 	public String getUserId() {
@@ -124,10 +130,18 @@ public class User {
 		this.profileImage = profileImage;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", mobileNo=" + mobileNo + ", email=" + email + ", address=" + address + ", city=" + city + ", state=" + state + ", pincode=" + pincode + ", password="
-				+ password + ", profileImage=" + profileImage + "]";
+				+ password + ", profileImage=" + profileImage + ", role=" + role + "]";
 	}
 
 }

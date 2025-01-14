@@ -1,0 +1,9 @@
+Spring Security Steps:
+
+1 -> Add Spring Security Dependency
+2 -> Add role in user Model
+3 -> Create CustomUser class and implement userDetails
+		Set role, email, password
+4 -> Create UserDetailsServiceImpl and implement UserDetailsService
+5 -> Create SecurityConfig
+6 -> Create AuthSuccessHandler 

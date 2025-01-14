@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,19 +23,8 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@PostMapping(path = "/saveUser")
-	public String saveUser(@ModelAttribute User user, @RequestParam("profile_image") MultipartFile file, @RequestParam("cpassword") String cpassword, HttpSession session) throws IOException {
-		if (user.getPassword().equals(cpassword)) {
-			User saveUser = userService.saveUser(user, file);
-			if (!ObjectUtils.isEmpty(saveUser)) {
-				session.setAttribute("successMsg", "User saved successfully");
-			} else {
-				session.setAttribute("errorMsg", "Something went wrong");
-			}
-		} else {
-			session.setAttribute("errorMsg", "Password mismatch");
-		}
-
-		return "redirect:/register";
+	@GetMapping("/")
+	public String homePage() {
+		return "User/homePage.html";
 	}
 }

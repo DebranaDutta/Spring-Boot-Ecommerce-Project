@@ -15,7 +15,7 @@
 				</div>
 				<div class="col-md-7 p-5">
 					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-header">
+						<div class="card-header text-center">
 							<p class="fs-4 text-center">Register</p>
 							<th:block th:if="${session.successMsg}">
 								<p class="text-success fw-bold">[[${session.successMsg}]]</p>
@@ -26,7 +26,7 @@
 								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
 							</th:block>
 						</div>
-						<form action="/user/saveUser" enctype="multipart/form-data" method="post">
+						<form action="/registerUser" enctype="multipart/form-data" method="post">
 							<div class="card-body">
 								<div class="row">
 									<div class="col">
