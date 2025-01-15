@@ -21,12 +21,13 @@ public class User {
 	private String password;
 	private String profileImage;
 	private String role;
+	private boolean isEnabled;
 
 	public User() {
 		super();
 	}
 
-	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String city, String state, int pincode, String password, String profileImage, String role) {
+	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String city, String state, int pincode, String password, String profileImage, String role, boolean isEnabled) {
 		super();
 		this.userId = userId;
 		this.firstName = firstName;
@@ -40,6 +41,7 @@ public class User {
 		this.password = password;
 		this.profileImage = profileImage;
 		this.role = role;
+		this.isEnabled = isEnabled;
 	}
 
 	public String getUserId() {
@@ -138,10 +140,18 @@ public class User {
 		this.role = role;
 	}
 
+	public boolean isEnabled() {
+		return isEnabled;
+	}
+
+	public void setEnabled(boolean isEnabled) {
+		this.isEnabled = isEnabled;
+	}
+
 	@Override
 	public String toString() {
 		return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", mobileNo=" + mobileNo + ", email=" + email + ", address=" + address + ", city=" + city + ", state=" + state + ", pincode=" + pincode + ", password="
-				+ password + ", profileImage=" + profileImage + ", role=" + role + "]";
+				+ password + ", profileImage=" + profileImage + ", role=" + role + ", isEnabled=" + isEnabled + "]";
 	}
 
 }

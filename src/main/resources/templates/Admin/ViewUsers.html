@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{Admin/AdminBasePage::layout(~{::section})}">
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-5 p-3">
+			<div class="card card-sh">
+				<div class="card-header text-center">
+					<p class="fs-4">Users</p>
+					<div class="card-sh">
+						<th:block th:if="${session.successMsg}">
+							<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+						</th:block>
+						<th:block th:if="${session.errorMsg}">
+							<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+						</th:block>
+					</div>
+				</div>
+				<div class="card-body">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">FirstName</th>
+								<th scope="col">LastName</th>
+								<th scope="col">MobileNo</th>
+								<th scope="col">Email</th>
+								<th scope="col">Address</th>
+								<th scope="col">City</th>
+								<th scope="col">State</th>
+								<th scope="col">Pincode</th>
+								<th scope="col">ProfileImage</th>
+								<th scope="col">Role</th>
+								<th scope="col">Status</th>
+								<th scope="col">Action</th>
+								<th scope="col">Remove</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user,u:${users}">
+								<td>[[${user.firstName}]]</td>
+								<td>[[${user.lastName}]]</td>
+								<td>[[${user.mobileNo}]]</td>
+								<td>[[${user.email}]]</td>
+								<td>[[${user.address}]]</td>
+								<td>[[${user.city}]]</td>
+								<td>[[${user.state}]]</td>
+								<td>[[${user.pincode}]]</td>
+								<td>[[${user.profileImage}]]</td>
+								<td>[[${user.role}]]</td>
+								<td th:if="${user.isEnabled} == true" class="text-primary">ACTIVE</td>
+								<td th:if="${user.isEnabled} == false" class="text-danger">IN-ACTIVE</td>
+								<td>
+									<a th:href="@{'/admin/updateStatus?userstatus=true&userid='+${user.userId}}" class="text-white bg-primary btn">Active</a> 
+									<a th:href="@{'/admin/updateStatus?userstatus=false&userid='+${user.userId}}" class="text-white bg-danger btn">Inactive</a>
+								</td>
+								<td><a href="#" class="btn"><i class="fa-solid fa-trash-can text-danger"></i></a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

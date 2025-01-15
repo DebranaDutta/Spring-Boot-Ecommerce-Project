@@ -22,7 +22,7 @@
 							</th:block>
 						</div>
 						<div class="card-body">
-							<form action="/product/updateProduct" method="post" enctype="multipart/form-data">
+							<form action="/admin/updateProduct" method="post" enctype="multipart/form-data">
 								<div class="mb-3">
 									<input type="hidden" name="productId" th:value="${product.productId}"> <label>Title : </label> <input type="text" name="productName" class="form-control" th:value="${product.productName}">
 								</div>

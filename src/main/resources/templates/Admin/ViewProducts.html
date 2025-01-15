@@ -12,8 +12,8 @@
 					<div class="card shadow-sm p-0 mb-5 bg-body-tertiary rounded">
 						<div class="card-body">
 							<div class="list-group">
-								<a href="/product/viewProducts" class="list-group-item list-group-item-action" aria-current="true">All Categories</a> 
-								<a th:each="category:${categories}" th:href="@{'/product/viewProducts?category='+${category.name}}"	th:classappend="${paramValue == category.name}?'active':'' " class="list-group-item list-group-item-action">[[${category.name}]]</a>
+								<a href="/admin/viewProducts" class="list-group-item list-group-item-action" aria-current="true">All Categories</a> 
+								<a th:each="category:${categories}" th:href="@{'/admin/viewProducts?category='+${category.name}}"	th:classappend="${paramValue == category.name}?'active':'' " class="list-group-item list-group-item-action">[[${category.name}]]</a>
 							</div>
 						</div>
 					</div>
@@ -63,8 +63,10 @@
 										<td th:if="${product.isActive} == true" class="text-primary">ACTIVE</td>
 										<td th:if="${product.isActive} == false" class="text-danger">IN-ACTIVE</td>
 										<td><img th:src="@{'/img/product/'+${product.image}}" width="50px" height="50px"></td>
-										<td><a th:href="@{'/product/editProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> <a th:href="@{'/product/deleteProduct/'+${product.productId}}" class="btn"><i
-												class="fa-solid fa-trash-can text-danger fa-2x"></i></a></td>
+										<td>
+											<a th:href="@{'/admin/editProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-pen-to-square text-primary fa-2x"></i></a> 
+											<a th:href="@{'/admin/deleteProduct/'+${product.productId}}" class="btn"><i class="fa-solid fa-trash-can text-danger fa-2x"></i></a>
+										</td>
 									</tr>
 								</tbody>
 							</table>

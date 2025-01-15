@@ -1,6 +1,7 @@
 package com.ecom.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,21 @@ public class HomeController {
 
 	@Autowired
 	ProductService productService;
-	
+
 	@Autowired
 	UserService userService;
+
+	@ModelAttribute
+	public void getUserDetails(Principal principal, Model model) {
+		if (principal != null) {
+			String email = principal.getName();
+			User user = userService.getUserByEmail(email);
+			model.addAttribute("user", user);
+		}
+
+		List<Category> categories = categoryService.getAllActiveCategory();
+		model.addAttribute("categories", categories);
+	}
 
 	@GetMapping("/")
 	public String index() {
@@ -52,7 +65,7 @@ public class HomeController {
 	public String register() {
 		return "Registration.html";
 	}
-	
+
 	@PostMapping(path = "/registerUser")
 	public String saveUser(@ModelAttribute User user, @RequestParam("profile_image") MultipartFile file, @RequestParam("cpassword") String cpassword, HttpSession session) throws IOException {
 		if (user.getPassword().equals(cpassword)) {
@@ -76,7 +89,7 @@ public class HomeController {
 
 		List<Product> products = productService.getAllActiveProducts(category);
 		model.addAttribute("products", products);
-		
+
 		model.addAttribute("paramValue", category);
 
 		return "Product.html";

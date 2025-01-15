@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -32,6 +34,7 @@ public class UserServiceImpl implements UserService {
 		String imageName = file.isEmpty() ? "defaultUser.jpg" : file.getOriginalFilename();
 		user.setProfileImage(imageName);
 		user.setRole("ROLE_USER");
+		user.setEnabled(true);
 
 		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);
@@ -57,4 +60,21 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	@Override
+	public List<User> getAllUser() {
+		List<User> users = userRepository.findAll();
+		return users;
+	}
+
+	@Override
+	public boolean updateAccountStatus(String id, Boolean status) {
+		Optional<User> findByuser = userRepository.findById(id);
+		if (findByuser.isPresent()) {
+			User user = findByuser.get();
+			user.setEnabled(status);
+			userRepository.save(user);
+			return true;
+		}
+		return false;
+	}
 }
