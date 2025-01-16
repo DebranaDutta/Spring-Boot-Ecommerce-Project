@@ -1,5 +1,7 @@
 package com.ecom.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,6 +24,9 @@ public class User {
 	private String profileImage;
 	private String role;
 	private boolean isEnabled;
+	private boolean accountNonLocked;
+	private Integer failedAttempt;
+	private Date lockTime;
 
 	public User() {
 		super();
@@ -148,10 +153,28 @@ public class User {
 		this.isEnabled = isEnabled;
 	}
 
-	@Override
-	public String toString() {
-		return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", mobileNo=" + mobileNo + ", email=" + email + ", address=" + address + ", city=" + city + ", state=" + state + ", pincode=" + pincode + ", password="
-				+ password + ", profileImage=" + profileImage + ", role=" + role + ", isEnabled=" + isEnabled + "]";
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+
+	public Integer getFailedAttempt() {
+		return failedAttempt;
+	}
+
+	public void setFailedAttempt(Integer failedAttempt) {
+		this.failedAttempt = failedAttempt;
+	}
+
+	public Date getLockTime() {
+		return lockTime;
+	}
+
+	public void setLockTime(Date lockTime) {
+		this.lockTime = lockTime;
 	}
 
 }

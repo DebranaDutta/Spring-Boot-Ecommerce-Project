@@ -225,20 +225,23 @@ public class AdminController {
 
 	@GetMapping("/updateStatus")
 	public String updateUserAccountStatus(@RequestParam("userstatus") Boolean status, @RequestParam("userid") String id, HttpSession session) {
-		
-		System.out.println(" Status "+ status);
-		System.out.println(" User ID  "+ id);
-		
-		//boolean isEnable = true;
-		
 		boolean isEnable = userService.updateAccountStatus(id, status);
-		
-		if(isEnable) {
+		if (isEnable) {
 			session.setAttribute("successMsg", "Account Status Updated");
-		}else {
-			session.setAttribute("errorMsg","Something wrong on server");
+		} else {
+			session.setAttribute("errorMsg", "Something wrong on server");
 		}
-		
+		return "redirect:/admin/viewUsers";
+	}
+
+	@GetMapping("/deleteUser")
+	public String deleteUser(@RequestParam("userid") String userid, HttpSession session) {
+		int count = userService.deleteUserByUserId(userid);
+		if (count >= 1) {
+			session.setAttribute("successMsg", "User deleted successfully");
+		} else {
+			session.setAttribute("errorMsg", "Something went wrong!.....");
+		}
 		return "redirect:/admin/viewUsers";
 	}
 

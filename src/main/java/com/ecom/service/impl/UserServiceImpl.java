@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ecom.model.User;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.UserService;
+import com.ecom.util.AppConstant;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -35,6 +37,8 @@ public class UserServiceImpl implements UserService {
 		user.setProfileImage(imageName);
 		user.setRole("ROLE_USER");
 		user.setEnabled(true);
+		user.setAccountNonLocked(true);
+		user.setFailedAttempt(0);
 
 		String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 		user.setPassword(encodedPassword);
@@ -76,5 +80,46 @@ public class UserServiceImpl implements UserService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public Integer deleteUserByUserId(String userId) {
+		int count = userRepository.deleteByUserId(userId);
+		return count;
+	}
+
+	@Override
+	public void increaseFailedAttempt(User user) {
+		int attempt = user.getFailedAttempt() + 1;
+		user.setFailedAttempt(attempt);
+		userRepository.save(user);
+	}
+
+	@Override
+	public void userAccountLocked(User user) {
+		user.setAccountNonLocked(false);
+		user.setLockTime(new Date());
+		userRepository.save(user);
+	}
+
+	@Override
+	public boolean unlockAccountTimeExpired(User user) {
+		long lockTime = user.getLockTime().getTime();
+		long unlockTime = lockTime + AppConstant.UNLOCK_DURATION_TIME;
+		long currentTime = System.currentTimeMillis();
+		if (unlockTime < currentTime) {
+			user.setAccountNonLocked(true);
+			user.setFailedAttempt(0);
+			user.setLockTime(null);
+			userRepository.save(user);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void resetAttempt(int userId) {
+		// TODO Auto-generated method stub
+
 	}
 }
