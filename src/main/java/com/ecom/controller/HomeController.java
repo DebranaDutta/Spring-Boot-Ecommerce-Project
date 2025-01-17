@@ -102,4 +102,14 @@ public class HomeController {
 		return "viewProduct.html";
 	}
 
+	@GetMapping("/forgot-password")
+	public String loadForgotPasswordPage() {
+		return "FogotPassword.html";
+	}
+
+	@GetMapping("/reset-password")
+	public String loadResetPasswordPage() {
+		return "ResetPassword.html";
+	}
+
 }
