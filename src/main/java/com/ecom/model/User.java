@@ -27,12 +27,14 @@ public class User {
 	private boolean accountNonLocked;
 	private Integer failedAttempt;
 	private Date lockTime;
+	private String resetToken;
 
 	public User() {
 		super();
 	}
 
-	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String city, String state, int pincode, String password, String profileImage, String role, boolean isEnabled) {
+	public User(String userId, String firstName, String lastName, double mobileNo, String email, String address, String city, String state, int pincode, String password, String profileImage, String role, boolean isEnabled, boolean accountNonLocked,
+			Integer failedAttempt, Date lockTime, String resetToken) {
 		super();
 		this.userId = userId;
 		this.firstName = firstName;
@@ -47,6 +49,18 @@ public class User {
 		this.profileImage = profileImage;
 		this.role = role;
 		this.isEnabled = isEnabled;
+		this.accountNonLocked = accountNonLocked;
+		this.failedAttempt = failedAttempt;
+		this.lockTime = lockTime;
+		this.resetToken = resetToken;
+	}
+
+	public String getResetToken() {
+		return resetToken;
+	}
+
+	public void setResetToken(String resetToken) {
+		this.resetToken = resetToken;
 	}
 
 	public String getUserId() {
@@ -175,6 +189,13 @@ public class User {
 
 	public void setLockTime(Date lockTime) {
 		this.lockTime = lockTime;
+	}
+
+	@Override
+	public String toString() {
+		return "User [userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName + ", mobileNo=" + mobileNo + ", email=" + email + ", address=" + address + ", city=" + city + ", state=" + state + ", pincode=" + pincode + ", password="
+				+ password + ", profileImage=" + profileImage + ", role=" + role + ", isEnabled=" + isEnabled + ", accountNonLocked=" + accountNonLocked + ", failedAttempt=" + failedAttempt + ", lockTime=" + lockTime + ", resetToken=" + resetToken
+				+ "]";
 	}
 
 }

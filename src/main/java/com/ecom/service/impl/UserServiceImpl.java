@@ -53,8 +53,6 @@ public class UserServiceImpl implements UserService {
 
 		User saveUser = userRepository.save(user);
 
-		System.out.println(" User : " + user);
-
 		return saveUser;
 	}
 
@@ -118,8 +116,27 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void updateUserResetToken(String emailId, String token) {
+		User user = userRepository.findByEmail(emailId);
+		user.setResetToken(token);
+		userRepository.save(user);
+	}
+
+	@Override
 	public void resetAttempt(int userId) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public User getUserByToken(String token) {
+		User user = userRepository.findByResetToken(token);
+		return user;
+	}
+
+	@Override
+	public User updateUser(User user) {
+		User savedUser = userRepository.save(user);
+		return savedUser;
 	}
 }

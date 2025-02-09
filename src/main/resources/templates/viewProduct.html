@@ -10,6 +10,16 @@
 			<div class="row">
 				<div class="col-md-12 p-5">
 					<div class="row">
+						<div class="text-center">
+							<th:block th:if="${session.successMsg}">
+								<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+						</div>
 						<div class="col-md-6 text-end">
 							<img alt="" th:src="@{'/img/product/'+${product.image}}" width="330px" height="400px">
 						</div>
@@ -42,7 +52,12 @@
 								</div>
 							</div>
 							<th:block th:if="${product.stock} > 0">
-								<a href="" class="btn btn-primary col-md-4 offset-md-1">Add to Cart</a>
+								<th:block th:if="${user==null}">
+									<a href="/signin" class="btn btn-primary col-md-4 offset-md-1">Add to Cart</a>
+								</th:block>
+								<th:block th:unless="${user==null}">
+									<a th:href="@{'/user/addToCart?pid='+${product.productId}+'&uid='+${user.userId}}" class="btn btn-primary col-md-4 offset-md-1">Add to Cart</a>
+								</th:block>
 							</th:block>
 							<th:block th:if="${product.stock} <= 0">
 								<a href="" class="btn text-white btn-warning col-md-4 offset-md-1">Out of Stock</a>

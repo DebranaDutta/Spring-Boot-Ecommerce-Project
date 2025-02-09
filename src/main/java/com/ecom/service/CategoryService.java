@@ -2,8 +2,11 @@ package com.ecom.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.ecom.model.Category;
 
+@Component
 public interface CategoryService {
 	public Category saveCategory(Category category);
 
