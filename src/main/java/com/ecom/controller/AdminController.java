@@ -24,10 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
 import com.ecom.model.Product;
+import com.ecom.model.ProductOrder;
 import com.ecom.model.User;
 import com.ecom.service.CategoryService;
+import com.ecom.service.ProductOrderService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
+import com.ecom.util.OrderStatus;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -43,6 +46,9 @@ public class AdminController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private ProductOrderService productOrderService;
 
 	@GetMapping("/")
 	public String index() {
@@ -63,7 +69,7 @@ public class AdminController {
 		if (product.getDiscount() < 0 || product.getDiscount() > 100) {
 			session.setAttribute("errorMsg", "Discount Amount shoud be between 0% to 100% !");
 		} else {
-			Product saveProduct = productService.saveProdcut(product, isActive, file);
+			Product saveProduct = productService.saveProduct(product, isActive, file);
 			if (!ObjectUtils.isEmpty(saveProduct)) {
 				session.setAttribute("successMsg", "Product saved successfully");
 			} else {
@@ -89,7 +95,7 @@ public class AdminController {
 
 	@GetMapping("/editProduct/{productId}")
 	public String loadEditProductPage(@PathVariable("productId") String productId, Model model) {
-		Product product = productService.getProdcutById(productId);
+		Product product = productService.getProductById(productId);
 		model.addAttribute("product", product);
 
 		List<Category> categories = categoryService.getAllCategory();
@@ -245,5 +251,34 @@ public class AdminController {
 		return "redirect:/admin/viewUsers";
 	}
 
+	/**** User Specific Tasks ****/
+
+	/**** Order Specific Tasks ****/
+	@GetMapping("/viewOrders")
+	public String loadViewOrdersPage(Model model) {
+		List<ProductOrder> productOrders = productOrderService.getAllOrders();
+		model.addAttribute("productOrders", productOrders);
+		return "Admin/ViewOrders.html";
+	}
+
+	@PostMapping("/update-order")
+	public String updateOrderStatus(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) {
+		String status = null;
+		OrderStatus[] orderStatus = OrderStatus.values();
+		for (OrderStatus os : orderStatus) {
+			Integer id = os.getId();
+			if (id.equals(st)) {
+				status = os.getName();
+			}
+		}
+		boolean updateOrder = productOrderService.updateOrderStatus(orderId, status);
+		if (updateOrder) {
+			session.setAttribute("successMsg", "Status updated");
+		} else {
+			session.setAttribute("errorMsg", "Status not updated");
+		}
+
+		return "redirect:/admin/viewOrders";
+	}
 	/**** User Specific Tasks ****/
 }

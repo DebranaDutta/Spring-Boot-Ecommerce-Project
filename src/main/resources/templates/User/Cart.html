@@ -10,65 +10,58 @@
 	<section>
 		<div class="container-fluid mt-5 p-5">
 			<div class="card card-sh">
-				<div class="card-header text-center">
-					<p class="fs-4">View Cart Products</p>
-					<div class="card-sh">
-						<th:block th:if="${session.successMsg}">
-							<p class="text-success fw-bold">[[${session.successMsg}]]</p>
-							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
-						</th:block>
-						<th:block th:if="${session.errorMsg}">
-							<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
-							<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
-						</th:block>
+				<th:block th:if="${length}>0">
+					<div class="card-header text-center">
+						<p class="fs-4">View Cart Products</p>
 					</div>
-				</div>
-				<div class="card-body">
-					<table class="table">
-						<thead>
-							<tr>
-								<th scope="col">Sl No</th>
-								<th scope="col">Image</th>
-								<th scope="col">Product Name</th>
-								<th scope="col">Category</th>
-								<th scope="col">Discount(%)</th>
-								<th scope="col">Price</th>
-								<th scope="col">Quantity</th>
-								<th scope="col">Total Price</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="cart,c:${carts}">
-								<th scope="row">[[${c.count}]]</th>
-								<td><img th:src="@{'/img/product/'+${cart.product.image}}" width="50px" height="50px"></td>
-								<td>[[${cart.product.productName}]]</td>
-								<td>[[${cart.product.category}]]</td>
-								<td>[[${cart.product.discount}]]</td>
-								<td>[[${cart.product.price} - (${cart.product.price}*${cart.product.discount}/100)]]</td>
-								<td>
-									<a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.cartId}}">
-										<i class="fa-solid fa-minus"></i>
-									</a> 
-									[ [[${cart.quantity}]] ] 
-									<a th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.cartId}}">
-										<i class="fa-solid fa-plus"></i>
-									</a>
-								</td>
-								<td>[[${cart.totalPrice}]]</td>
-							</tr>
-							<tr>
-								<th></th>
-								<td></td>
-								<td colspan="4"></td>
-								<td class="fw-bold">Total Price :</td>
-								<td class="fw-bold">[[${totalOrderPrice}]]</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+					<div class="card-body">
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col">Sl No</th>
+									<th scope="col">Image</th>
+									<th scope="col">Product Name</th>
+									<th scope="col">Category</th>
+									<th scope="col">Discount(%)</th>
+									<th scope="col">Price</th>
+									<th scope="col">Quantity</th>
+									<th scope="col">Total Price</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="cart,c:${carts}">
+									<th scope="row">[[${c.count}]]</th>
+									<td><img th:src="@{'/img/product/'+${cart.product.image}}" width="50px" height="50px"></td>
+									<td>[[${cart.product.productName}]]</td>
+									<td>[[${cart.product.category}]]</td>
+									<td>[[${cart.product.discount}]]</td>
+									<td>[[${cart.product.price} - (${cart.product.price}*${cart.product.discount}/100)]]</td>
+									<td><a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.cartId}}"> <i class="fa-solid fa-minus"></i>
+									</a> [ [[${cart.quantity}]] ] <a th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.cartId}}"> <i class="fa-solid fa-plus"></i>
+									</a></td>
+									<td>[[${cart.totalPrice}]]</td>
+								</tr>
+								<tr>
+									<th></th>
+									<td></td>
+									<td colspan="4"></td>
+									<td class="fw-bold">Total Price :</td>
+									<td class="fw-bold">[[${totalOrderPrice}]]</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="text-center">
+							<a href="/user/orders" class="btn btn-warning">Proceed Payment</a>
+						</div>
+					</div>
+				</th:block>
+				<th:block th:unless="${length}>0">
+					<div class="text-center text-danger">
+						<p class="h4">Your cart is empty...!</p>
+					</div>
+				</th:block>
 			</div>
 		</div>
 	</section>
 </body>
-
 </html>

@@ -116,7 +116,7 @@ public class HomeController {
 
 	@GetMapping("/viewProduct/{productId}")
 	public String products(@PathVariable("productId") String productId, Model model) {
-		Product viewProduct = productService.getProdcutById(productId);
+		Product viewProduct = productService.getProductById(productId);
 		model.addAttribute("product", viewProduct);
 		return "viewProduct.html";
 	}

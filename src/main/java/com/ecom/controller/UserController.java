@@ -1,12 +1,14 @@
 package com.ecom.controller;
 
 import java.security.Principal;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,16 +16,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.ecom.model.Cart;
 import com.ecom.model.Category;
+import com.ecom.model.OrderRequest;
+import com.ecom.model.ProductOrder;
 import com.ecom.model.User;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
+import com.ecom.service.ProductOrderService;
 import com.ecom.service.UserService;
+import com.ecom.util.OrderStatus;
+import com.google.gson.Gson;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(path = "/user")
 public class UserController {
+	Gson gson = new Gson();
+
 	@Autowired
 	UserService userService;
 
@@ -33,9 +42,18 @@ public class UserController {
 	@Autowired
 	CartService cartService;
 
+	@Autowired
+	ProductOrderService orderService;
+
 	@GetMapping("/")
-	public String homePage() {
+	public String loadhomePage() {
 		return "User/homePage.html";
+	}
+
+	private User getLoggedInUserDetails(Principal principal) {
+		String email = principal.getName();
+		User user = userService.getUserByEmail(email);
+		return user;
 	}
 
 	@ModelAttribute
@@ -65,26 +83,77 @@ public class UserController {
 
 	@GetMapping("/cart")
 	public String loadCartPage(Principal principal, Model model) {
-		User user = getLoggedINUserDetails(principal);
+		User user = getLoggedInUserDetails(principal);
 		List<Cart> carts = cartService.getCartsByUser(user.getUserId());
 		model.addAttribute("carts", carts);
-		double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
-		model.addAttribute("totalOrderPrice", totalOrderPrice);
+		int length = carts.size();
+		model.addAttribute("length", length);
+		if (length > 0) {
+			double totalOrderPrice = carts.get(length - 1).getTotalOrderPrice();
+			model.addAttribute("totalOrderPrice", totalOrderPrice);
+		}
 		return "User/Cart.html";
-	}
-
-	private User getLoggedINUserDetails(Principal principal) {
-		String email = principal.getName();
-		User user = userService.getUserByEmail(email);
-		return user;
 	}
 
 	@GetMapping("/cartQuantityUpdate")
 	public String updateCartQuantity(@RequestParam("sy") String symbol, @RequestParam("cid") String cartId) {
-		System.out.println("Symbol " + symbol);
-		System.out.println("Cart ID  " + cartId);
 		cartService.updateQuantity(symbol, cartId);
 		return "redirect:/user/cart";
+	}
+
+	@GetMapping("/orders")
+	public String loadOrderPage(Principal principal, Model model) {
+		User user = getLoggedInUserDetails(principal);
+		List<Cart> carts = cartService.getCartsByUser(user.getUserId());
+		model.addAttribute("carts", carts);
+		if (carts.size() > 0) {
+			double totalOrderPrice = carts.get(carts.size() - 1).getTotalOrderPrice();
+			model.addAttribute("totalOrderPrice", totalOrderPrice);
+			double totalPayable = totalOrderPrice + 50;
+			model.addAttribute("totalPayable", totalPayable);
+		}
+		return "User/Orders.html";
+	}
+
+	@GetMapping("/success")
+	public String loadSuccessPage() {
+		return "User/OrderSuccess.html";
+	}
+
+	@PostMapping("/save-order")
+	public String processOrder(@ModelAttribute OrderRequest orderRequest, Principal principal) {
+		User user = getLoggedInUserDetails(principal);
+		orderService.saveOrder(user.getUserId(), orderRequest);
+		return "redirect:/user/success";
+	}
+
+	@GetMapping("/myOrders")
+	public String loadMyOrdersPage(Principal principal, Model model) {
+		User user = getLoggedInUserDetails(principal);
+		List<ProductOrder> productOrders = orderService.getOrderByUser(user.getUserId());
+		System.out.println(" *****  ProductOrders : " + gson.toJson(productOrders));
+		model.addAttribute("productOrders", productOrders);
+		return "User/MyOrders.html";
+	}
+
+	@GetMapping("/cancelOrder")
+	public String cancelOrder(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) {
+		System.out.println("** st : " + st);
+		String status = null;
+		OrderStatus[] orderStatus = OrderStatus.values();
+		for (OrderStatus os : orderStatus) {
+			Integer id = os.getId();
+			if (id.equals(st)) {
+				status = os.getName();
+			}
+		}
+		boolean updateOrder = orderService.updateOrderStatus(orderId, status);
+		if (updateOrder) {
+			session.setAttribute("successMsg", "Status updated");
+		} else {
+			session.setAttribute("errorMsg", "Status not updated");
+		}
+		return "redirect:/user/myOrders";
 	}
 
 }

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{basePage::layout(~{::section})}">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Page</title>
+</head>
+
+<body>
+	<section>
+		<div class="container-fluid mt-2 p-5">
+			<div class="row">
+				<div class="col-md-5 mt-3 p-5">
+					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-header">
+							<p class="fs-4 text-center">Address Details</p>
+						</div>
+						<div class="card-body">
+							<form action="/user/save-order" method="post">
+								<div class="mb-3 row">
+									<input type="text" name="firstName" placeholder="FirstName" class="form-control col"> 
+									<input type="text" name="lastName" placeholder="LastName" class="form-control col ms-2">
+								</div>
+								<div class="mb-3 row">
+									<input type="email" name="email" placeholder="Email" class="form-control col"> 
+									<input type="text" name="mobileNo" placeholder="Mobile No" class="form-control col ms-2">
+								</div>
+								<div class="mb-3 row">
+									<input type="text" name="address" placeholder="Address" class="form-control col"> 
+									<input type="text" name="city" placeholder="City" class="form-control col ms-2">
+								</div>
+								<div class="mb-3 row">
+									<input type="text" name="state" placeholder="State" class="form-control col"> 
+									<input type="number" name="pincode" placeholder="Pincode" class="form-control col ms-2">
+								</div>
+								<div class="mb-3 row">
+									<p class="h4">Select Payment Type</p>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="paymentType" id="flexRadioDefault1" value="COD"> <label class="form-check-label" for="flexRadioDefault1"> Cash on delivery </label>
+									</div>
+									<div class="form-check">
+										<input class="form-check-input" type="radio" name="paymentType" id="flexRadioDefault2" value="OP" checked> <label class="form-check-label" for="flexRadioDefault2"> Online payment </label>
+									</div>
+								</div>
+								<button class="btn bg-primary text-white col-md-12">Place Order</button>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-7 mt-3 p-5">
+					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-header">
+							<p class="fs-4 text-center">Order Details</p>
+						</div>
+						<div class="card-body">
+							<table class="table table-borderless">
+								<thead>
+									<tr>
+										<th scope="col">Sl No</th>
+										<th scope="col">Image</th>
+										<th scope="col">Product</th>
+										<th scope="col">Quantity</th>
+										<th scope="col">Price</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="cart,c:${carts}">
+										<th scope="row">[[${c.count}]]</th>
+										<td><img th:src="@{'/img/product/'+${cart.product.image}}" width="50px" height="50px"></td>
+										<td>[[${cart.product.productName}]]</td>
+										<td>[[${cart.quantity}]]</td>
+										<td>[[${cart.totalPrice}]]</td>
+									</tr>
+									<tr class="border-top">
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="fw-semibold">Total Price :</td>
+										<td class="fw-semibold">[[${totalOrderPrice}]]</td>
+									</tr>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="fw-medium">Delivery Charge :</td>
+										<td class="fw-medium">50</td>
+									</tr>
+									<tr class="border-top">
+										<td></td>
+										<td></td>
+										<td></td>
+										<td class="fw-bold">Payble Amount :</td>
+										<td class="fw-bold">[[${totalPayable}]]</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

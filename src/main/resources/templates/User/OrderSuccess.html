@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{basePage::layout(~{::section})}">
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div class="container mt-5 p-5">
+			<div class="row">
+				<div class="col-md-6 offset-md-3 text-center card-sh mt-3">
+					<i class="fa-solid fa-circle-check fs-5x text-success mt-2"></i>
+					<p class="fs-3">Your product ordered successfully</p>
+					<p class="fs-4">Product will be delivered within 7 days</p>
+					<div class="text-center mb-3">
+						<a href="/" class="btn btn-primary">Home</a> 
+						<a href="/user/myOrders" class="btn btn-primary">Your Orders</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

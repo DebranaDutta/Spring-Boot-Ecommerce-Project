@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{basePage::layout(~{::section})}">
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-5 p-5">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
+						<div class="card-header">
+							<p class="fs-4 text-center">Order Details</p>
+							<th:block th:if="${session.successMsg}">
+								<p class="text-success fw-bold text-center">[[${session.successMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+							<th:block th:if="${session.errorMsg}">
+								<p class="text-danger fw-bold text-center">[[${session.errorMsg}]]</p>
+								<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+							</th:block>
+						</div>
+						<div class="card-body">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Sl No</th>
+										<th scope="col">Order Id</th>
+										<th scope="col">Date</th>
+										<th scope="col">Image</th>
+										<th scope="col">Product Details</th>
+										<th scope="col">Quantity</th>
+										<th scope="col">Unit Price</th>
+										<th scope="col">Status</th>
+										<th scope="col">Payment</th>
+										<th scope="col">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="order,o:${productOrders}">
+										<th scope="row">[[${o.count}]]</th>
+										<td>[[${order.orderId}]]</td>
+										<td>[[${order.orderDate}]]</td>
+										<td><img th:src="@{'/img/product/'+${order.product.image}}" width="50px" height="50px"></td>
+										<td>[[${order.product.productName}]]</td>
+										<td>[[${order.quantity}]]</td>
+										<td>[[${order.price}]]</td>
+										<th:block th:if="${order.status != 'Cancelled'}">
+											<td class="text-success">[[${order.status}]]</td>
+										</th:block>
+										<th:block th:unless="${order.status != 'Cancelled'}">
+											<td class="text-danger">[[${order.status}]]</td>
+										</th:block>
+										<th:block th:if="${order.paymentType} == COD">
+											<td>Cash On Delivery</td>
+										</th:block>
+										<th:block th:if="${order.status != 'Cancelled'}">
+											<td><a th:href="@{'/user/cancelOrder?id='+${order.orderId}+'&st=6'}" class="btn btn-sm btn-danger">Cancel</a></td>
+										</th:block>
+										<th:block th:unless="${order.status != 'Cancelled'}">
+											<td><a th:href="@{'/user/cancelOrder?id='+${order.orderId}+'&st=6'}" class="btn btn-sm btn-danger disabled">Cancel</a></td>
+										</th:block>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

@@ -25,7 +25,7 @@ public class ProductServiceImpl implements ProductService {
 	@Autowired
 	private ProductRepository productRepository;
 
-	public Product saveProdcut(Product product, String isActive, MultipartFile file) throws IOException {
+	public Product saveProduct(Product product, String isActive, MultipartFile file) throws IOException {
 		if (isActive.equalsIgnoreCase("true")) {
 			product.setActive(true);
 		} else {
@@ -77,7 +77,7 @@ public class ProductServiceImpl implements ProductService {
 	}
 
 	@Override
-	public Product getProdcutById(String productId) {
+	public Product getProductById(String productId) {
 		Product product = productRepository.findByProductId(productId);
 		return product;
 	}
