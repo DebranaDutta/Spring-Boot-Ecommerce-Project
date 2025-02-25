@@ -2,14 +2,18 @@ package com.ecom.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
@@ -30,13 +34,18 @@ import com.ecom.service.CategoryService;
 import com.ecom.service.ProductOrderService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
+import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
+import com.google.gson.Gson;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+
+	Gson gson = new Gson();
 
 	@Autowired
 	public ProductService productService;
@@ -50,10 +59,94 @@ public class AdminController {
 	@Autowired
 	private ProductOrderService productOrderService;
 
+	@Autowired
+	CommonUtil commonUtil;
+
+	@Autowired
+	PasswordEncoder passwordEncoder;
+
 	@GetMapping("/")
 	public String index() {
 		return "Admin/AdminIndex.html";
 	}
+
+	private User getLoggedInUserDetails(Principal principal) {
+		String email = principal.getName();
+		User user = userService.getUserByEmail(email);
+		return user;
+	}
+
+	/**** Admin Specific Tasks ****/
+
+	@PostMapping(path = "/registerAdmin")
+	public String saveAdmin(@ModelAttribute User user, @RequestParam("profile_image") MultipartFile file, @RequestParam("cpassword") String cpassword, HttpSession session) throws IOException {
+		if (user.getPassword().equals(cpassword)) {
+			User saveUser = userService.saveAdmin(user, file);
+			if (!ObjectUtils.isEmpty(saveUser)) {
+				session.setAttribute("successMsg", "New admin saved successfully");
+			} else {
+				session.setAttribute("errorMsg", "Something went wrong");
+			}
+		} else {
+			session.setAttribute("errorMsg", "Password mismatch");
+		}
+		return "redirect:/admin/addAdmin";
+	}
+
+	@GetMapping("/addAdmin")
+	public String loadAddAdminPage() {
+		return "Admin/AddAdmin.html";
+	}
+
+	@GetMapping("/viewAdmins")
+	public String loadViewAdmins(Model model, HttpSession session) {
+		List<User> users = userService.getAllUser("ROLE_ADMIN");
+		model.addAttribute("users", users);
+		return "Admin/ViewUsers.html";
+	}
+
+	@GetMapping("/viewAdminProfile")
+	public String loadViewAdminProfilePage(Principal principal, Model model) {
+		User adminUser = getLoggedInUserDetails(principal);
+		model.addAttribute("user", adminUser);
+		return "Admin/ViewAdminProfile.html";
+	}
+
+	@PostMapping("/updateAdminProfile")
+	public String updateAdminProfile(@ModelAttribute User user, HttpSession session, Principal principal) {
+		User updatedUser = userService.updateUserProfile(user);
+		if (!ObjectUtils.isEmpty(updatedUser)) {
+			session.setAttribute("successMsg", "Profile updated");
+		} else {
+			session.setAttribute("errorMsg", "Profile not updated");
+		}
+		return "redirect:/admin/viewAdminProfile";
+	}
+
+	@PostMapping("/changeAdminPassword")
+	public String changePassword(@RequestParam String newPassword, @RequestParam String currentPassword, @RequestParam String confirmPassword, Principal principal, HttpSession session) {
+		if (newPassword.equals(confirmPassword)) {
+			User user = getLoggedInUserDetails(principal);
+			boolean matches = passwordEncoder.matches(currentPassword, user.getPassword());
+			if (matches) {
+				String encodedPassword = passwordEncoder.encode(newPassword);
+				user.setPassword(encodedPassword);
+				User updatedUser = userService.updateUser(user);
+				if (!ObjectUtils.isEmpty(updatedUser)) {
+					session.setAttribute("psuccessMsg", "Password updated");
+				} else {
+					session.setAttribute("perrorMsg", "Current password is incorrect");
+				}
+			} else {
+				session.setAttribute("perrorMsg", "Current password is incorrect");
+			}
+		} else {
+			session.setAttribute("perrorMsg", "New Password and Confirm Pasword does not matches");
+		}
+		return "redirect:/admin/viewAdminProfile";
+	}
+
+	/**** Admin Specific Tasks ****/
 
 	/**** Product Specific Tasks ****/
 
@@ -80,13 +173,23 @@ public class AdminController {
 	}
 
 	@GetMapping("/viewProducts")
-	public String loadViewProducts(Model model, HttpSession session, @RequestParam(value = "category", defaultValue = "") String category) {
+	public String loadViewProducts(Model model, HttpSession session, @RequestParam(value = "category", defaultValue = "") String category, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+			@RequestParam(name = "pageSize", defaultValue = "4") Integer pageSize) {
 
 		List<Category> categories = categoryService.getAllCategory();
 		model.addAttribute("categories", categories);
 
-		List<Product> products = productService.getAllProducts(category);
+		Page<Product> page = productService.getAllProductsWithPagination(pageNo, pageSize, category);
+		List<Product> products = page.getContent();
+		Integer productSize = products.size();
+		model.addAttribute("productSize", productSize);
 		model.addAttribute("products", products);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
 
 		model.addAttribute("paramValue", category);
 
@@ -224,20 +327,28 @@ public class AdminController {
 
 	@GetMapping("/viewUsers")
 	public String loadViewUsers(Model model, HttpSession session) {
-		List<User> users = userService.getAllUser();
+		List<User> users = userService.getAllUser("ROLE_USER");
 		model.addAttribute("users", users);
 		return "Admin/ViewUsers.html";
 	}
 
 	@GetMapping("/updateStatus")
 	public String updateUserAccountStatus(@RequestParam("userstatus") Boolean status, @RequestParam("userid") String id, HttpSession session) {
+		User user = userService.getUserID(id);
 		boolean isEnable = userService.updateAccountStatus(id, status);
 		if (isEnable) {
-			session.setAttribute("successMsg", "Account Status Updated");
+			if (user.getRole().equals("ROLE_ADMIN")) {
+				session.setAttribute("successMsg", "Account Status Updated");
+				return "redirect:/admin/viewAdmins";
+			} else {
+				session.setAttribute("successMsg", "Account Status Updated");
+				return "redirect:/admin/viewUsers";
+			}
+
 		} else {
 			session.setAttribute("errorMsg", "Something wrong on server");
+			return null;
 		}
-		return "redirect:/admin/viewUsers";
 	}
 
 	@GetMapping("/deleteUser")
@@ -262,7 +373,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/update-order")
-	public String updateOrderStatus(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) {
+	public String updateOrderStatus(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) throws UnsupportedEncodingException, MessagingException {
 		String status = null;
 		OrderStatus[] orderStatus = OrderStatus.values();
 		for (OrderStatus os : orderStatus) {
@@ -271,8 +382,12 @@ public class AdminController {
 				status = os.getName();
 			}
 		}
-		boolean updateOrder = productOrderService.updateOrderStatus(orderId, status);
-		if (updateOrder) {
+
+		ProductOrder updateOrder = productOrderService.updateOrderStatus(orderId, status);
+
+		commonUtil.sendMailForProductOrder(updateOrder, status);
+
+		if (!ObjectUtils.isEmpty(updateOrder)) {
 			session.setAttribute("successMsg", "Status updated");
 		} else {
 			session.setAttribute("errorMsg", "Status not updated");
@@ -280,5 +395,33 @@ public class AdminController {
 
 		return "redirect:/admin/viewOrders";
 	}
+
 	/**** User Specific Tasks ****/
+
+	/* Search Functionality Module */
+	@GetMapping("/searchOrder")
+	public String searchProductOrders(@RequestParam String ch, Model model, HttpSession session) {
+		List<ProductOrder> productOrders = productOrderService.getOrdersBySearch(ch);
+		model.addAttribute("productOrders", productOrders);
+		return "Admin/ViewOrders.html";
+	}
+
+	@GetMapping("/searchProduct")
+	public String searchProduct(@RequestParam String ch, Model model, HttpSession session, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "4") Integer pageSize) {
+		Page<Product> page = productService.searchProductWithPagination(pageNo, pageSize, ch);
+		List<Product> products = page.getContent();
+		Integer productSize = products.size();
+		model.addAttribute("productSize", productSize);
+		model.addAttribute("products", products);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
+		model.addAttribute("products", products);
+
+		return "Admin/ViewProducts.html";
+	}
+	/* Search Functionality Module */
 }

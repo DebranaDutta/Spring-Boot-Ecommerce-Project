@@ -11,6 +11,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +60,18 @@ public class ProductServiceImpl implements ProductService {
 			products = productRepository.findByCategory(category);
 		}
 		return products;
+	}
+
+	@Override
+	public Page<Product> getAllProductsWithPagination(Integer pageNo, Integer pageSize, String category) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> pageProducts = null;
+		if (ObjectUtils.isEmpty(category)) {
+			pageProducts = productRepository.findAll(pageable);
+		} else {
+			pageProducts = productRepository.findByCategory(category, pageable);
+		}
+		return pageProducts;
 	}
 
 	@Override
@@ -114,6 +129,31 @@ public class ProductServiceImpl implements ProductService {
 		}
 
 		return updatedProduct;
+	}
+
+	@Override
+	public List<Product> searchProduct(String ch) {
+		List<Product> list = productRepository.findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch);
+		return list;
+	}
+
+	@Override
+	public Page<Product> searchProductWithPagination(Integer pageNo, Integer pageSize, String ch) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> pageProducts = productRepository.findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(ch, ch, pageable);
+		return pageProducts;
+	}
+
+	@Override
+	public Page<Product> getAllActiveProductWithPagination(Integer pageNo, Integer pageSize, String category) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<Product> pageProduct = null;
+		if (ObjectUtils.isEmpty(category)) {
+			pageProduct = productRepository.findByIsActiveTrue(pageable);
+		} else {
+			pageProduct = productRepository.findByCategoryAndIsActiveTrue(pageable, category);
+		}
+		return pageProduct;
 	}
 
 }

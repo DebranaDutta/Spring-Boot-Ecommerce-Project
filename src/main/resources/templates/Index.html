@@ -34,51 +34,11 @@
 		<div class="container">
 			<div class="row">
 				<p class="text-center fs-4">Category</p>
-				<div class="col-md-2">
+				<div class="col-md-2" th:each="c:${categories}">
 					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
 						<div class="card-body text-center">
-							<img src="img/category/appli.png" width="65%" height="140px">
-							<p>Electronics</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-2">
-					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-body text-center">
-							<img src="img/category/beuty.png" width="65%" height="140px">
-							<p>Beauty Products</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-2">
-					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-body text-center">
-							<img src="img/category/grocery.jpg" width="65%" height="140px">
-							<p>Grocery</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-2">
-					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-body text-center">
-							<img src="img/category/laptop.jpg" width="65%" height="140px">
-							<p>Laptop</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-2">
-					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-body text-center">
-							<img src="img/category/mobile.png" width="65%" height="140px">
-							<p>Mobile</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-2">
-					<div class="card rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded">
-						<div class="card-body text-center">
-							<img src="img/category/pant.png" width="65%" height="140px">
-							<p>Clothing</p>
+							<a class="text-decoration-none" th:href="@{'/products?category='+${c.name}}"><img th:src="@{'img/category/'+${c.image}}" width="65%" height="140px">
+							<p>[[${c.name}]]</p></a>
 						</div>
 					</div>
 				</div>
@@ -87,31 +47,13 @@
 		<!-- End Category Module -->
 
 		<!-- Start Product Module -->
-		<div class="container-fluid bg-light p-3">
+		<div class="container-fluid bg-light p-3 mb-5">
 			<div class="row">
 				<p class="text-center fs-4">Latest Product</p>
-				<div class="col-md-3">
+				<div class="col-md-3" th:each="p:${products}">
 					<div class="card-body text-center">
-						<img / alt="" src="img/product/laptop.jpg" class="rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded" width="65%" height="140px">
-						<p class="text-center"><%=p.getTitle()%></p>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="card-body text-center">
-						<img / alt="" src="img/product/laptop.jpg" class="rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded" width="65%" height="140px">
-						<p class="text-center"><%=p.getTitle()%></p>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="card-body text-center">
-						<img / alt="" src="img/product/laptop.jpg" class="rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded" width="65%" height="140px">
-						<p class="text-center"><%=p.getTitle()%></p>
-					</div>
-				</div>
-				<div class="col-md-3">
-					<div class="card-body text-center">
-						<img / alt="" src="img/product/laptop.jpg" class="rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded" width="65%" height="140px">
-						<p class="text-center"><%=p.getTitle()%></p>
+						<a style="text-decoration: none;" th:href="@{'/viewProduct/'+${p.productId}}"><img alt="" th:src="@{'img/product/'+${p.image}}" class="rounded-circle shadow-sm p-3 mb-5 bg-body-tertiary rounded" width="65%" height="200px">
+							<p class="text-center">[[${p.productName}]]</p></a>
 					</div>
 				</div>
 			</div>

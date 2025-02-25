@@ -10,7 +10,7 @@
 		<div class="container-fluid mt-5 p-3">
 			<div class="card card-sh">
 				<div class="card-header text-center">
-					<p class="fs-4">Users</p>
+					<p class="fs-4">Profiles</p>
 					<div class="card-sh">
 						<th:block th:if="${session.successMsg}">
 							<p class="text-success fw-bold">[[${session.successMsg}]]</p>
@@ -23,6 +23,19 @@
 					</div>
 				</div>
 				<div class="card-body">
+					<a href="/admin/" class="btn btn-sm text-muted fw-bold"><i class="fa-solid fa-arrow-left"></i> Back</a>
+					<div class="mb-2">
+						<form action="">
+							<div class="row">
+								<div class="col-md-3">
+									<input type="text" class="form-control" name="" placeholder="Enter order id...">
+								</div>
+								<div class="col">
+									<button class="btn btn-primary col">Search</button>
+								</div>
+							</div>
+						</form>
+					</div>
 					<table class="table">
 						<thead>
 							<tr>
@@ -55,13 +68,11 @@
 								<td>[[${user.role}]]</td>
 								<td th:if="${user.isEnabled} == true" class="text-primary">ACTIVE</td>
 								<td th:if="${user.isEnabled} == false" class="text-danger">IN-ACTIVE</td>
-								<td>
-									<a th:href="@{'/admin/updateStatus?userstatus=true&userid='+${user.userId}}" class="text-white bg-primary btn">Active</a> 
-									<a th:href="@{'/admin/updateStatus?userstatus=false&userid='+${user.userId}}" class="text-white bg-danger btn">Inactive</a>
-								</td>
-								<td>
-									<a th:href="@{'/admin/deleteUser?userid='+${user.userId}}" class="btn"><i class="fa-solid fa-trash-can text-danger"></i></a>
-								</td>
+								<td><a th:href="@{'/admin/updateStatus?userstatus=true&userid='+${user.userId}}" class="text-white bg-primary btn">Active</a> <a th:href="@{'/admin/updateStatus?userstatus=false&userid='+${user.userId}}" class="text-white bg-danger btn">Inactive</a>
+									<th:block th:if="${user.role} == 'ROLE_ADMIN' ">
+										<a href="/admin/viewAdminProfile" class="btn btn-info">Edit</a>
+									</th:block></td>
+								<td><a th:href="@{'/admin/deleteUser?userid='+${user.userId}}" class="btn"><i class="fa-solid fa-trash-can text-danger"></i></a></td>
 							</tr>
 						</tbody>
 					</table>

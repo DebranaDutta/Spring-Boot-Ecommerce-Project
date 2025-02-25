@@ -1,5 +1,6 @@
 package com.ecom.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,8 @@ import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
 import com.google.gson.Gson;
 
+import jakarta.mail.MessagingException;
+
 @Component
 public class ProductOrderServiceImpl implements ProductOrderService {
 
@@ -34,7 +37,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 	private CommonUtil commonUtil;
 
 	@Override
-	public void saveOrder(String userId, OrderRequest orderRequest) {
+	public void saveOrder(String userId, OrderRequest orderRequest) throws UnsupportedEncodingException, MessagingException {
 		List<Cart> carts = cartRepository.findByUserUserId(userId);
 
 		for (Cart cart : carts) {
@@ -60,7 +63,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
 			productOrder.setAddress(address);
 
-			productOrderRepository.save(productOrder);
+			ProductOrder saverder = productOrderRepository.save(productOrder);
+			commonUtil.sendMailForProductOrder(saverder, "Success");
 		}
 	}
 
@@ -72,21 +76,27 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 	}
 
 	@Override
-	public boolean updateOrderStatus(String id, String Status) {
+	public ProductOrder updateOrderStatus(String id, String Status) {
 		Optional<ProductOrder> findById = productOrderRepository.findById(id);
 		if (findById.isPresent()) {
 			ProductOrder productOrder = findById.get();
 			productOrder.setStatus(Status);
-			productOrderRepository.save(productOrder);
-			return true;
+			ProductOrder updateProductOrder = productOrderRepository.save(productOrder);
+			return updateProductOrder;
 		}
-		return false;
+		return null;
 	}
 
 	@Override
 	public List<ProductOrder> getAllOrders() {
 		List<ProductOrder> productOrders = productOrderRepository.findAll();
 		return productOrders;
+	}
+
+	@Override
+	public List<ProductOrder> getOrdersBySearch(String ch) {
+		List<ProductOrder> list = productOrderRepository.findByOrderIdContainingIgnoreCaseOrUserFirstNameContainingIgnoreCaseOrAddressEmailContainingIgnoreCaseOrProductProductNameContainingIgnoreCase(ch, ch, ch, ch);
+		return list;
 	}
 
 }

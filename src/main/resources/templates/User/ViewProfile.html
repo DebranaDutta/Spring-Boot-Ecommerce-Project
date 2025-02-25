@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{basePage::layout(~{::section})}">
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<section>
+		<div class="container mt-5 p-3 mb-5">
+			<div class=" text-end">
+				<a href="/" class="btn btn-sm text-muted fw-bold"><i class="fa-solid fa-arrow-left"></i> Back</a>
+			</div>
+			<div class="row ">
+				<div class="col-md-10 offset-md-1">
+					<div class="card card-sh">
+						<div class="card-body">
+							<div class="text-center">
+								<p class="fs-3 text-center">My Profile</p>
+								<th:block th:if="${session.successMsg}">
+									<p class="text-success fw-bold">[[${session.successMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+								<th:block th:if="${session.errorMsg}">
+									<p class="text-danger">[[${session.errorMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+								<hr>
+								<img alt="" src="/img/user/ecom.png" class="border p-2" style="width: 100px; height: 100px; border-radius: 50%;">
+							</div>
+							<div class="col-md-8 offset-md-2">
+								<table class="table table-borderless">
+									<tbody>
+										<form action="/user/updateProfile" method="post">
+											<tr>
+												<th scope="row">First name :</th>
+												<td><input type="text" name="firstName" class="form-control" th:value="${user.firstName}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Last name :</th>
+												<td><input type="text" name="lastName" class="form-control" th:value="${user.lastName}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Mobile No :</th>
+												<td><input type="number" name="mobileNo" class="form-control" th:value="${user.mobileNo}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Email :</th>
+												<td><input type="email" name="email" class="form-control" th:value="${user.email}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Address :</th>
+												<td><input type="text" name="address" class="form-control" th:value="${user.address}"></td>
+											</tr>
+											<tr>
+												<th scope="row">City :</th>
+												<td><input type="text" name="city" class="form-control" th:value="${user.city}"></td>
+											</tr>
+											<tr>
+												<th scope="row">State :</th>
+												<td><input type="text" name="state" class="form-control" th:value="${user.state}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Pincode :</th>
+												<td><input type="number" name="pincode" class="form-control" th:value="${user.pincode}"></td>
+											</tr>
+											<tr>
+												<th scope="row">Role :</th>
+												<td><input type="text" name="role" class="form-control" th:value="${user.role}" readonly></td>
+											</tr>
+											<tr>
+												<th scope="row">Account Status :</th>
+												<td><input type="text" name="isEnabled" class="form-control" th:value="${user.isEnabled}" readonly></td>
+											</tr>
+											<tr>
+												<th scope="row">Is account locked :</th>
+												<td><input type="text" name="accountNonLocked" class="form-control" th:value="${user.accountNonLocked}" readonly></td>
+											</tr>
+											<tr>
+												<th></th>
+												<td class="text-center">
+													<button class="btn btn-sm bg-primary text-light">Update</button>
+												</td>
+											</tr>
+										</form>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<div class="card card-sh">
+						<div class="card-body">
+							<div class="text-center">
+								<p class="fs-3 text-center">Change Password</p>
+								<th:block th:if="${session.psuccessMsg}">
+									<p class="text-success fw-bold">[[${session.psuccessMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+								<th:block th:if="${session.perrorMsg}">
+									<p class="text-danger">[[${session.perrorMsg}]]</p>
+									<th:block th:text="${@commonServiceImpl.removeSessionMsg()}"></th:block>
+								</th:block>
+							</div>
+							<div class="col-md-8 offset-md-2">
+								<table class="table table-borderless">
+									<tbody>
+										<form action="/user/changePassword" method="post">
+											<tr>
+												<th scope="row">Current Password :</th>
+												<td><input type="password" name="currentPassword" class="form-control"></td>
+											</tr>
+											<tr>
+												<th scope="row">New Password :</th>
+												<td><input type="password" name="newPassword" class="form-control"></td>
+											</tr>
+											<tr>
+												<th scope="row">Confirm Password :</th>
+												<td><input type="password" name="confirmPassword" class="form-control"></td>
+											</tr>
+											<tr>
+												<th></th>
+												<td class="text-center">
+													<button class="btn btn-sm bg-primary text-light">Update</button>
+												</td>
+											</tr>
+										</form>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

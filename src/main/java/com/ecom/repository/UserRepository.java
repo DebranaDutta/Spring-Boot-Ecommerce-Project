@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 	public int deleteByUserId(@Param("userId") String userId);
 
 	public User findByResetToken(String token);
+	
+	public List<User> findByRole(String role);
 }

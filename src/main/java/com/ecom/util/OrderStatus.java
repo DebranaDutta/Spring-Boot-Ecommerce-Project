@@ -1,7 +1,7 @@
 package com.ecom.util;
 
 public enum OrderStatus {
-	IN_PROGRESS(1, "In Progress"), ORDER_RECEIVED(2, "Order Recived"), PRODUCT_PACKED(3, "Product Packed"), OUT_FOR_DELIVERY(4, "Out for Delivery"), ORDER_DELIVERED(5, " Delivered"), CANCEL(6,"Cancelled");
+	IN_PROGRESS(1, "In Progress"), ORDER_RECEIVED(2, "Order Recived"), PRODUCT_PACKED(3, "Product Packed"), OUT_FOR_DELIVERY(4, "Out for Delivery"), ORDER_DELIVERED(5, " Delivered"), CANCEL(6, "Cancelled"), SUCCESS(7, "Success");
 
 	private Integer id;
 	private String name;

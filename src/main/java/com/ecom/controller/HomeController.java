@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,7 +72,11 @@ public class HomeController {
 	}
 
 	@GetMapping("/")
-	public String index() {
+	public String index(Model model) {
+		List<Category> categories = categoryService.getAllActiveCategory().stream().sorted((c1, c2) -> c1.getId().compareTo(c2.getId())).limit(6).toList();
+		List<Product> products = productService.getAllActiveProducts("").stream().sorted((p1, p2) -> p2.getProductId().compareTo(p1.getProductId())).limit(8).toList();
+		model.addAttribute("categories", categories);
+		model.addAttribute("products", products);
 		return "Index.html";
 	}
 
@@ -101,13 +106,26 @@ public class HomeController {
 	}
 
 	@GetMapping("/products")
-	public String prodcut(Model model, @RequestParam(value = "category", defaultValue = "") String category) {
-
+	public String prodcut(Model model, @RequestParam(value = "category", defaultValue = "") String category, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
 		List<Category> categories = categoryService.getAllActiveCategory();
 		model.addAttribute("categories", categories);
 
-		List<Product> products = productService.getAllActiveProducts(category);
+		/*
+		 * List<Product> products = productService.getAllActiveProducts(category);
+		 * model.addAttribute("products", products);
+		 */
+
+		Page<Product> page = productService.getAllActiveProductWithPagination(pageNo, pageSize, category);
+		List<Product> products = page.getContent();
+		Integer productSize = products.size();
+		model.addAttribute("productSize", productSize);
 		model.addAttribute("products", products);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
 
 		model.addAttribute("paramValue", category);
 
@@ -186,4 +204,23 @@ public class HomeController {
 	}
 
 	/* Forgot Password Module */
+
+	/* Search Functionality Module */
+	@GetMapping("/search")
+	public String searchProduct(@RequestParam String ch, Model model, HttpSession session, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+		Page<Product> page = productService.searchProductWithPagination(pageNo, pageSize, ch);
+		List<Product> products = page.getContent();
+		Integer productSize = products.size();
+		model.addAttribute("productSize", productSize);
+		model.addAttribute("products", products);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
+		model.addAttribute("products", products);
+		return "Product.html";
+	}
+	/* Search Functionality Module */
 }
