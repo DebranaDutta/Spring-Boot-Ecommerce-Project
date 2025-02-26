@@ -148,6 +148,55 @@ public class AdminController {
 
 	/**** Admin Specific Tasks ****/
 
+	/**** Order Specific Tasks ****/
+	@GetMapping("/viewOrders")
+	public String loadViewOrdersPage(Model model, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "4") Integer pageSize) {
+		Page<ProductOrder> page = productOrderService.getAllOrdersWithPagination(pageNo, pageSize);
+		List<ProductOrder> productOrders = page.getContent();
+		Integer productOrderSize = productOrders.size();
+		model.addAttribute("productOrderSize", productOrderSize);
+		model.addAttribute("productOrders", productOrders);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
+		return "Admin/ViewOrders.html";
+	}
+
+	@PostMapping("/update-order")
+	public String updateOrderStatus(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) throws UnsupportedEncodingException, MessagingException {
+		String status = null;
+		OrderStatus[] orderStatus = OrderStatus.values();
+		for (OrderStatus os : orderStatus) {
+			Integer id = os.getId();
+			if (id.equals(st)) {
+				status = os.getName();
+			}
+		}
+
+		ProductOrder updateOrder = productOrderService.updateOrderStatus(orderId, status);
+
+		commonUtil.sendMailForProductOrder(updateOrder, status);
+
+		if (!ObjectUtils.isEmpty(updateOrder)) {
+			session.setAttribute("successMsg", "Status updated");
+		} else {
+			session.setAttribute("errorMsg", "Status not updated");
+		}
+
+		return "redirect:/admin/viewOrders";
+	}
+
+	@PostMapping("/delete-order")
+	public String deleteOrder(@RequestParam("id") String orderId) {
+		productOrderService.deleteOrderById(orderId);
+		return "redirect:/admin/viewOrders";
+	}
+
+	/**** Order Specific Tasks ****/
+
 	/**** Product Specific Tasks ****/
 
 	@RequestMapping(method = RequestMethod.GET, path = "/loadAddProduct")
@@ -364,45 +413,21 @@ public class AdminController {
 
 	/**** User Specific Tasks ****/
 
-	/**** Order Specific Tasks ****/
-	@GetMapping("/viewOrders")
-	public String loadViewOrdersPage(Model model) {
-		List<ProductOrder> productOrders = productOrderService.getAllOrders();
-		model.addAttribute("productOrders", productOrders);
-		return "Admin/ViewOrders.html";
-	}
-
-	@PostMapping("/update-order")
-	public String updateOrderStatus(@RequestParam("id") String orderId, @RequestParam("st") Integer st, HttpSession session) throws UnsupportedEncodingException, MessagingException {
-		String status = null;
-		OrderStatus[] orderStatus = OrderStatus.values();
-		for (OrderStatus os : orderStatus) {
-			Integer id = os.getId();
-			if (id.equals(st)) {
-				status = os.getName();
-			}
-		}
-
-		ProductOrder updateOrder = productOrderService.updateOrderStatus(orderId, status);
-
-		commonUtil.sendMailForProductOrder(updateOrder, status);
-
-		if (!ObjectUtils.isEmpty(updateOrder)) {
-			session.setAttribute("successMsg", "Status updated");
-		} else {
-			session.setAttribute("errorMsg", "Status not updated");
-		}
-
-		return "redirect:/admin/viewOrders";
-	}
-
-	/**** User Specific Tasks ****/
-
 	/* Search Functionality Module */
 	@GetMapping("/searchOrder")
-	public String searchProductOrders(@RequestParam String ch, Model model, HttpSession session) {
-		List<ProductOrder> productOrders = productOrderService.getOrdersBySearch(ch);
+	public String searchProductOrders(@RequestParam String ch, Model model, HttpSession session, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo, @RequestParam(name = "pageSize", defaultValue = "4") Integer pageSize) {
+		Page<ProductOrder> page = productOrderService.searchOrderWithPagination(pageNo, pageSize, ch);
+		List<ProductOrder> productOrders = page.getContent();
+		Integer productOrderSize = productOrders.size();
+		model.addAttribute("productOrderSize", productOrderSize);
 		model.addAttribute("productOrders", productOrders);
+		model.addAttribute("pageNo", page.getNumber());
+		model.addAttribute("totalElements", page.getTotalElements());
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("isFirst", page.isFirst());
+		model.addAttribute("isLast", page.isLast());
+		model.addAttribute("pageSize", pageSize);
+
 		return "Admin/ViewOrders.html";
 	}
 

@@ -45,7 +45,7 @@
 										<th scope="col">Action</th>
 									</tr>
 								</thead>
-								<th:block th:if="${productOrders.size}>0">
+								<th:block th:if="${productOrderSize}>0">
 									<tbody>
 										<tr th:each="order,o:${productOrders}">
 											<th scope="row">[[${o.count}]]</th>
@@ -94,7 +94,7 @@
 											</th:block>
 											<th:block th:if="${order.status == 'Cancelled'}">
 												<td>
-													<form action="/admin/update-order" method="post">
+													<form action="/admin/delete-order" method="post">
 														<div class="row">
 															<div class="col">
 																<select class="form-control" name="st" disabled>
@@ -109,7 +109,7 @@
 															</div>
 															<input th:value="${order.orderId}" name="id" type="hidden">
 															<div class="col">
-																<button class="btn btn-danger btn-sm disabled">Update</button>
+																<button class="btn btn-danger btn-sm">Delete</button>
 															</div>
 														</div>
 													</form>
@@ -118,10 +118,24 @@
 										</tr>
 									</tbody>
 								</th:block>
-								<th:block th:if="${productOrders.size}<=0">
+								<th:block th:if="${productOrderSize}<=0">
 									<p class="fs-4 text-danger text-center mt-4">No orders are available with this search criateria. Please try with other details...!</p>
 								</th:block>
 							</table>
+							<div class="row mt-2">
+								<div class="col-md-5">Total Products : [[${totalElements}]]</div>
+								<div class="col-md-5">
+									<nav aria-label="Page navigation example">
+										<ul class="pagination">
+											<li class="page-item" th:classappend="${isFirst}?'disabled':''"><a class="page-link" th:href="@{'/admin/viewOrders?pageNo='+${pageNo-1}}" aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+											</a></li>
+											<li th:each="i:${#numbers.sequence(1,totalPages)}" class="page-item" th:classappend="${pageNo+1==i}?'active':''"><a class="page-link" th:href="@{'/admin/viewOrders?pageNo='+${i-1}}">[[${i}]]</a></li>
+											<li class="page-item" th:classappend="${isLast}?'disabled':''"><a class="page-link" th:href="@{'/admin/viewOrders?pageNo='+${pageNo+1}}" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+											</a></li>
+										</ul>
+									</nav>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

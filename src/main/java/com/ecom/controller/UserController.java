@@ -139,7 +139,6 @@ public class UserController {
 	public String loadMyOrdersPage(Principal principal, Model model) {
 		User user = getLoggedInUserDetails(principal);
 		List<ProductOrder> productOrders = orderService.getOrderByUser(user.getUserId());
-		System.out.println(" *****  ProductOrders : " + gson.toJson(productOrders));
 		model.addAttribute("productOrders", productOrders);
 		return "User/MyOrders.html";
 	}

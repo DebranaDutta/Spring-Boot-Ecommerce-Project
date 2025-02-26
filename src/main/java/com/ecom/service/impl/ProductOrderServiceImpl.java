@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import com.ecom.model.Address;
 import com.ecom.model.Cart;
@@ -64,7 +68,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 			productOrder.setAddress(address);
 
 			ProductOrder saverder = productOrderRepository.save(productOrder);
+			
+			cartRepository.deleteByCartId(cart.getCartId());
+			
 			commonUtil.sendMailForProductOrder(saverder, "Success");
+			
+			
 		}
 	}
 
@@ -94,9 +103,28 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 	}
 
 	@Override
-	public List<ProductOrder> getOrdersBySearch(String ch) {
+	public Page<ProductOrder> getAllOrdersWithPagination(Integer pageNo, Integer pageSize) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<ProductOrder> pageProductOrders = productOrderRepository.findAll(pageable);
+		return pageProductOrders;
+	}
+
+	@Override
+	public List<ProductOrder> searchOrder(String ch) {
 		List<ProductOrder> list = productOrderRepository.findByOrderIdContainingIgnoreCaseOrUserFirstNameContainingIgnoreCaseOrAddressEmailContainingIgnoreCaseOrProductProductNameContainingIgnoreCase(ch, ch, ch, ch);
 		return list;
+	}
+
+	@Override
+	public Page<ProductOrder> searchOrderWithPagination(Integer pageNo, Integer pageSize, String ch) {
+		Pageable pageable = PageRequest.of(pageNo, pageSize);
+		Page<ProductOrder> pageProductOrders = productOrderRepository.findByOrderIdContainingIgnoreCaseOrUserFirstNameContainingIgnoreCaseOrAddressEmailContainingIgnoreCaseOrProductProductNameContainingIgnoreCase(ch, ch, ch, ch, pageable);
+		return pageProductOrders;
+	}
+
+	@Override
+	public void deleteOrderById(String orderId) {
+		productOrderRepository.deleteByOrderId(orderId);
 	}
 
 }
